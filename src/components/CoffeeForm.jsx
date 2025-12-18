@@ -51,6 +51,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
     countryIds: initialData?.countryIds || (initialData?.countryId ? [initialData.countryId] : []),
     storeId: initialData?.storeId || '',
     priceEUR: initialData?.priceEUR || '',
+    weightG: initialData?.weightG || '',
     rating: initialData?.rating || 3,
     image: initialData?.image || ''
   });
@@ -219,6 +220,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
     const coffeeData = {
       ...formData,
       priceEUR: Number(formData.priceEUR),
+      weightG: formData.weightG ? Number(formData.weightG) : null,
       arabicaPercentage: Number(formData.arabicaPercentage),
       robustaPercentage: 100 - Number(formData.arabicaPercentage)
     };
@@ -606,24 +608,51 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
           {errors.storeId && <p className="text-error text-sm mt-1">{errors.storeId}</p>}
         </div>
 
-        {/* 7. Price */}
-        <div>
-          <label className="form-label">Cijena (EUR) *</label>
-          <div className="relative">
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.priceEUR}
-              onChange={(e) => handleChange('priceEUR', e.target.value)}
-              className={`form-input pr-12 ${errors.priceEUR ? 'border-error' : ''}`}
-              placeholder="0.00"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-coffee-roast font-medium">
-              €
-            </span>
+        {/* 7. Price & Weight */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="form-label">Cijena (EUR) *</label>
+            <div className="relative">
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.priceEUR}
+                onChange={(e) => handleChange('priceEUR', e.target.value)}
+                className={`form-input pr-12 ${errors.priceEUR ? 'border-error' : ''}`}
+                placeholder="0.00"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-coffee-roast font-medium">
+                €
+              </span>
+            </div>
+            {errors.priceEUR && <p className="text-error text-sm mt-1">{errors.priceEUR}</p>}
           </div>
-          {errors.priceEUR && <p className="text-error text-sm mt-1">{errors.priceEUR}</p>}
+          
+          <div>
+            <label className="form-label">Težina paketa (g)</label>
+            <div className="relative">
+              <input
+                type="number"
+                step="1"
+                min="0"
+                value={formData.weightG}
+                onChange={(e) => handleChange('weightG', e.target.value)}
+                className="form-input pr-12"
+                placeholder="npr. 1000"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-coffee-roast font-medium">
+                g
+              </span>
+            </div>
+            {formData.weightG && formData.priceEUR && (
+              <p className="text-xs text-coffee-roast mt-1">
+                Cijena/kg: <span className="font-semibold text-coffee-dark">
+                  {((formData.priceEUR / formData.weightG) * 1000).toFixed(2)} €/kg
+                </span>
+              </p>
+            )}
+          </div>
         </div>
 
         {/* 8. Rating */}

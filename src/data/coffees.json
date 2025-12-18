@@ -14,6 +14,7 @@
       ],
       "storeId": "1",
       "priceEUR": 18.99,
+      "weightG": 1000,
       "rating": 5,
       "priceHistory": [
         {
@@ -63,6 +64,7 @@
       ],
       "storeId": "2",
       "priceEUR": 12.49,
+      "weightG": 250,
       "rating": 4,
       "priceHistory": [
         {
@@ -107,6 +109,7 @@
       ],
       "storeId": "1",
       "priceEUR": 7.99,
+      "weightG": 250,
       "rating": 4,
       "priceHistory": [
         {
@@ -151,6 +154,7 @@
       ],
       "storeId": "3",
       "priceEUR": 5.99,
+      "weightG": 52,
       "rating": 3,
       "priceHistory": [
         {
@@ -189,6 +193,7 @@
       ],
       "storeId": "4",
       "priceEUR": 24.99,
+      "weightG": 500,
       "rating": 5,
       "priceHistory": [
         {
@@ -232,6 +237,7 @@
       ],
       "storeId": "5",
       "priceEUR": 8.99,
+      "weightG": 57,
       "rating": 4,
       "priceHistory": [
         {
@@ -268,6 +274,7 @@
       ],
       "storeId": "3",
       "priceEUR": 34.59,
+      "weightG": 1000,
       "rating": 5,
       "image": "1766082827310-71iwJipjiYL._AC_SL1500_.png",
       "robustaPercentage": 0,
@@ -277,6 +284,32 @@
           "id": "1734480000001",
           "date": "2025-12-18",
           "price": 34.59,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2025-12-18"
+    },
+    {
+      "brandId": "1",
+      "name": "La Reserva de ¡Tierra! Colombia Espresso",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        "colombia"
+      ],
+      "storeId": "3",
+      "priceEUR": 34.09,
+      "weightG": 1000,
+      "rating": 5,
+      "image": "1766083970041-2200-d-tierra_colombia-beans-_2.png",
+      "robustaPercentage": 0,
+      "id": "1766083853156",
+      "priceHistory": [
+        {
+          "id": "1766083881895",
+          "date": "2025-12-18",
+          "price": 34.09,
           "storeId": "3"
         }
       ],

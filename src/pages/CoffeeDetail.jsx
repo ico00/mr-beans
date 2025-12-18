@@ -9,7 +9,7 @@ import CoffeeBeanRating from '../components/CoffeeBeanRating';
 import PriceChart, { PriceByStoreChart } from '../components/PriceChart';
 import AddPriceEntry from '../components/AddPriceEntry';
 import PriceHistoryTable from '../components/PriceHistoryTable';
-import { formatPrice, formatDate, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { formatPrice, formatDate, formatWeight, formatPricePerKg, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
 
 export default function CoffeeDetail() {
   const { id } = useParams();
@@ -246,13 +246,23 @@ export default function CoffeeDetail() {
                 <CoffeeBeanRating rating={coffee.rating} readonly size={28} showLabel />
               </div>
               
-              {/* Price */}
+              {/* Price & Weight */}
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-sm text-coffee-roast mb-1">Trenutna cijena</p>
                   <span className="text-4xl font-bold text-coffee-dark">
                     {formatPrice(coffee.priceEUR)}
                   </span>
+                  {coffee.weightG && (
+                    <div className="mt-2 flex items-center gap-3 text-sm">
+                      <span className="px-3 py-1 bg-coffee-cream/50 rounded-lg text-coffee-dark font-medium">
+                        {formatWeight(coffee.weightG)}
+                      </span>
+                      <span className="text-coffee-roast">
+                        {formatPricePerKg(coffee.priceEUR, coffee.weightG)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {priceChange && (

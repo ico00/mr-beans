@@ -26,6 +26,28 @@ export function formatPercentage(value) {
   return `${value}%`;
 }
 
+// Formatiranje težine
+export function formatWeight(weightG) {
+  if (!weightG) return null;
+  if (weightG >= 1000) {
+    return `${(weightG / 1000).toFixed(weightG % 1000 === 0 ? 0 : 1)} kg`;
+  }
+  return `${weightG} g`;
+}
+
+// Izračun cijene po kilogramu
+export function calculatePricePerKg(priceEUR, weightG) {
+  if (!priceEUR || !weightG || weightG === 0) return null;
+  return (priceEUR / weightG) * 1000;
+}
+
+// Formatiranje cijene po kg
+export function formatPricePerKg(priceEUR, weightG) {
+  const pricePerKg = calculatePricePerKg(priceEUR, weightG);
+  if (pricePerKg === null) return null;
+  return formatPrice(pricePerKg) + '/kg';
+}
+
 // Izračun promjene cijene
 export function calculatePriceChange(priceHistory) {
   if (!priceHistory || priceHistory.length < 2) return null;

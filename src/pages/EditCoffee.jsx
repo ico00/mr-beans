@@ -62,6 +62,7 @@ export default function EditCoffee() {
     countryIds: coffee.countryIds || (coffee.countryId ? [coffee.countryId] : []),
     storeId: coffee.storeId,
     priceEUR: coffee.priceEUR,
+    weightG: coffee.weightG || '',
     rating: coffee.rating,
     image: coffee.image || ''
   };

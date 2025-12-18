@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Store, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import CoffeeBeanRating from './CoffeeBeanRating';
-import { formatPrice, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { formatPrice, formatWeight, formatPricePerKg, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
 
 export default function CoffeeCard({ coffee, index = 0 }) {
   const priceChange = calculatePriceChange(coffee.priceHistory);
@@ -95,11 +95,18 @@ export default function CoffeeCard({ coffee, index = 0 }) {
               </div>
             </div>
             
-            {/* Price */}
+            {/* Price & Weight */}
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-coffee-dark">
-                {formatPrice(coffee.priceEUR)}
-              </span>
+              <div>
+                <span className="text-2xl font-bold text-coffee-dark">
+                  {formatPrice(coffee.priceEUR)}
+                </span>
+                {coffee.weightG && (
+                  <div className="text-xs text-coffee-roast">
+                    {formatWeight(coffee.weightG)} • {formatPricePerKg(coffee.priceEUR, coffee.weightG)}
+                  </div>
+                )}
+              </div>
               
               {priceChange && (
                 <div className={`flex items-center gap-1 text-sm font-medium ${
