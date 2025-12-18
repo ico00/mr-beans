@@ -130,26 +130,36 @@
     {
       "id": "honduras",
       "name": "Honduras",
-      "flag": "🌍",
-      "region": "Nepoznato",
+      "flag": "🇭🇳",
+      "region": "Srednja Amerika",
       "coordinates": {
-        "lat": 0,
-        "lng": 0
+        "lat": 15.2,
+        "lng": -86.2419
       },
-      "coffeeProduction": "",
-      "varieties": []
+      "coffeeProduction": "Šesti najveći proizvođač kave na svijetu",
+      "varieties": [
+        "Bourbon",
+        "Catuai",
+        "Pacas",
+        "Lempira"
+      ]
     },
     {
       "id": "indija",
       "name": "Indija",
-      "flag": "🌍",
-      "region": "Nepoznato",
+      "flag": "🇮🇳",
+      "region": "Azija",
       "coordinates": {
-        "lat": 0,
-        "lng": 0
+        "lat": 20.5937,
+        "lng": 78.9629
       },
-      "coffeeProduction": "",
-      "varieties": []
+      "coffeeProduction": "Sedmi najveći proizvođač, poznata po monsunskoj kavi",
+      "varieties": [
+        "Monsooned Malabar",
+        "Mysore",
+        "Kent",
+        "S795"
+      ]
     }
   ]
 }

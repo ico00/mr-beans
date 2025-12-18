@@ -459,17 +459,17 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
               {/* Visual bar */}
               <div className="h-4 bg-neutral-200 rounded-full overflow-hidden mt-3 flex">
                 <div 
-                  className="h-full bg-gradient-to-r from-amber-300 to-amber-500 transition-all duration-300"
+                  className="h-full bg-amber-500 transition-all duration-300"
                   style={{ width: `${formData.arabicaPercentage}%` }}
                 />
                 <div 
-                  className="h-full bg-gradient-to-r from-amber-800 to-amber-950 transition-all duration-300"
+                  className="h-full bg-amber-900 transition-all duration-300"
                   style={{ width: `${robustaPercentage}%` }}
                 />
               </div>
               <div className="flex justify-between text-xs mt-1 text-coffee-roast">
-                <span>Arabica (blago, voćno)</span>
-                <span>Robusta (snažno, gorko)</span>
+                <span className="text-amber-600">Arabica (blago, voćno)</span>
+                <span className="text-amber-900">Robusta (snažno, gorko)</span>
               </div>
             </div>
           </div>

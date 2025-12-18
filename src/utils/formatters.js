@@ -48,18 +48,54 @@ export function formatPricePerKg(priceEUR, weightG) {
   return formatPrice(pricePerKg) + '/kg';
 }
 
-// Izračun promjene cijene
-export function calculatePriceChange(priceHistory) {
+// Izračun promjene cijene (uspoređuje samo cijene iz ISTOG dućana)
+export function calculatePriceChange(priceHistory, storeId = null) {
   if (!priceHistory || priceHistory.length < 2) return null;
   
-  const oldPrice = priceHistory[0].price;
-  const newPrice = priceHistory[priceHistory.length - 1].price;
+  // Filtriraj samo unose iz istog dućana ako je storeId naveden
+  let filteredHistory = priceHistory;
+  if (storeId) {
+    filteredHistory = priceHistory.filter(entry => entry.storeId === storeId);
+  } else {
+    // Ako nema storeId, grupiraj po dućanima i uzmi onaj s najviše unosa
+    const storeGroups = {};
+    priceHistory.forEach(entry => {
+      const sid = entry.storeId || 'unknown';
+      if (!storeGroups[sid]) storeGroups[sid] = [];
+      storeGroups[sid].push(entry);
+    });
+    
+    // Nađi dućan s najviše unosa
+    let maxEntries = 0;
+    let mainStoreId = null;
+    Object.entries(storeGroups).forEach(([sid, entries]) => {
+      if (entries.length > maxEntries) {
+        maxEntries = entries.length;
+        mainStoreId = sid;
+      }
+    });
+    
+    if (mainStoreId && storeGroups[mainStoreId]) {
+      filteredHistory = storeGroups[mainStoreId];
+    }
+  }
+  
+  // Potrebna su barem 2 unosa za usporedbu
+  if (filteredHistory.length < 2) return null;
+  
+  // Sortiraj po datumu
+  const sorted = [...filteredHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  const oldPrice = sorted[0].price;
+  const newPrice = sorted[sorted.length - 1].price;
   const change = ((newPrice - oldPrice) / oldPrice) * 100;
   
   return {
     absolute: newPrice - oldPrice,
     percentage: change,
-    direction: change > 0 ? 'up' : change < 0 ? 'down' : 'stable'
+    direction: change > 0 ? 'up' : change < 0 ? 'down' : 'stable',
+    oldDate: sorted[0].date,
+    newDate: sorted[sorted.length - 1].date
   };
 }
 

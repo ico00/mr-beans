@@ -5,6 +5,7 @@ import { useCoffeeData } from '../hooks/useCoffeeData';
 import CoffeeMap from '../components/CoffeeMap';
 import CoffeeMarketPrices from '../components/CoffeeMarketPrices';
 import { PriceComparisonChart } from '../components/PriceChart';
+import { CoffeeBeanRatingSmall } from '../components/CoffeeBeanRating';
 import { formatPrice, IMAGES_FOLDER } from '../utils/formatters';
 
 export default function Landing() {
@@ -231,8 +232,16 @@ export default function Landing() {
                 <Link to={`/coffee/${coffee.id}`}>
                   <div className="coffee-card glass-card rounded-2xl p-6 h-full">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-coffee-light/30 to-coffee-cream rounded-xl flex items-center justify-center">
-                        <Coffee className="w-8 h-8 text-coffee-dark" />
+                      <div className="w-16 h-16 bg-gradient-to-br from-coffee-light/30 to-coffee-cream rounded-xl flex items-center justify-center overflow-hidden">
+                        {coffee.image ? (
+                          <img 
+                            src={coffee.image.startsWith('http') ? coffee.image : `${IMAGES_FOLDER}${coffee.image}`}
+                            alt={coffee.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Coffee className="w-8 h-8 text-coffee-dark" />
+                        )}
                       </div>
                       <span className="px-3 py-1 bg-coffee-light/30 rounded-full text-xs font-semibold text-coffee-dark">
                         {coffee.type}
@@ -253,16 +262,7 @@ export default function Landing() {
                       <span className="text-2xl font-bold text-coffee-dark">
                         {formatPrice(coffee.priceEUR)}
                       </span>
-                      <div className="flex gap-0.5">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <div 
-                            key={star}
-                            className={`w-2 h-2 rounded-full ${
-                              star <= coffee.rating ? 'bg-coffee-dark' : 'bg-neutral-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
+                      <CoffeeBeanRatingSmall rating={coffee.rating} />
                     </div>
                   </div>
                 </Link>

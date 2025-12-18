@@ -1,18 +1,78 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  AreaChart, Area, BarChart, Bar
+  AreaChart, Area, BarChart, Bar, Cell
 } from 'recharts';
 import { formatPrice, formatDate } from '../utils/formatters';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 
+// Boje za različite trgovine
+const STORE_COLORS = [
+  '#3C2415', // Tamno smeđa
+  '#C9A227', // Zlatna
+  '#8A9A5B', // Maslinasto zelena
+  '#E57373', // Crvenkasta
+  '#64B5F6', // Plava
+  '#BA68C8', // Ljubičasta
+  '#4DB6AC', // Tirkizna
+  '#FF8A65', // Narančasta
+];
+
 export default function PriceChart({ coffee, height = 300 }) {
-  const data = coffee.priceHistory?.map(item => ({
-    date: formatDate(item.date),
-    rawDate: item.date,
-    cijena: item.price
-  })) || [];
+  const { stores, getStoreById } = useCoffeeData();
+  
+  // Grupiraj cijene po trgovinama i datumima
+  const { data, storeNames, hasMultipleStores } = useMemo(() => {
+    if (!coffee.priceHistory || coffee.priceHistory.length === 0) {
+      return { data: [], storeNames: [], hasMultipleStores: false };
+    }
+
+    // Pronađi sve unikatne trgovine i datume
+    const storeSet = new Set();
+    const dateSet = new Set();
+    
+    coffee.priceHistory.forEach(entry => {
+      if (entry.storeId) {
+        storeSet.add(entry.storeId);
+      }
+      dateSet.add(entry.date);
+    });
+
+    const uniqueStores = Array.from(storeSet);
+    const sortedDates = Array.from(dateSet).sort();
+    
+    // Kreiraj mapu trgovina s imenima
+    const storeNameMap = {};
+    uniqueStores.forEach(storeId => {
+      const store = getStoreById(storeId);
+      storeNameMap[storeId] = store?.name || 'Nepoznato';
+    });
+
+    // Pripremi podatke - svaki datum ima cijene za svaku trgovinu
+    const chartData = sortedDates.map(date => {
+      const point = { 
+        date: formatDate(date),
+        rawDate: date
+      };
+      
+      // Za svaku trgovinu, pronađi cijenu za taj datum
+      uniqueStores.forEach(storeId => {
+        const entry = coffee.priceHistory.find(
+          e => e.date === date && e.storeId === storeId
+        );
+        point[storeNameMap[storeId]] = entry?.price || null;
+      });
+      
+      return point;
+    });
+
+    return {
+      data: chartData,
+      storeNames: Object.values(storeNameMap),
+      hasMultipleStores: uniqueStores.length > 1
+    };
+  }, [coffee.priceHistory, getStoreById]);
 
   if (data.length === 0) {
     return (
@@ -22,24 +82,49 @@ export default function PriceChart({ coffee, height = 300 }) {
     );
   }
 
+  // Custom Tooltip
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-xl shadow-lg border border-neutral-100">
+          <p className="font-semibold text-coffee-dark mb-2">{label}</p>
+          {payload.map((entry, index) => (
+            entry.value && (
+              <div key={index} className="flex items-center gap-2 text-sm">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: entry.color }}
+                />
+                <span className="text-coffee-roast">{entry.name}:</span>
+                <span className="font-semibold text-coffee-dark">
+                  {formatPrice(entry.value)}
+                </span>
+              </div>
+            )
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="glass-card rounded-2xl p-6"
     >
-      <h3 className="text-lg font-display font-bold text-coffee-dark mb-4">
+      <h3 className="text-lg font-display font-bold text-coffee-dark mb-2">
         Povijest cijena
       </h3>
+      {hasMultipleStores && (
+        <p className="text-sm text-coffee-roast mb-4">
+          Prati promjene cijena u različitim trgovinama kroz vrijeme
+        </p>
+      )}
       
       <ResponsiveContainer width="100%" height={height}>
-        <AreaChart data={data}>
-          <defs>
-            <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6F4E37" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#6F4E37" stopOpacity={0}/>
-            </linearGradient>
-          </defs>
+        <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#D4C4A8" />
           <XAxis 
             dataKey="date" 
@@ -50,27 +135,45 @@ export default function PriceChart({ coffee, height = 300 }) {
             tick={{ fill: '#5A4F3E', fontSize: 12 }}
             tickLine={{ stroke: '#D4C4A8' }}
             tickFormatter={(value) => `${value}€`}
+            domain={['auto', 'auto']}
           />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: 'none',
-              borderRadius: '12px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
-            }}
-            formatter={(value) => [formatPrice(value), 'Cijena']}
-          />
-          <Area 
-            type="monotone" 
-            dataKey="cijena" 
-            stroke="#6F4E37" 
-            strokeWidth={3}
-            fill="url(#colorPrice)"
-            dot={{ fill: '#3C2415', strokeWidth: 2, r: 4 }}
-            activeDot={{ r: 6, fill: '#C9A227' }}
-          />
-        </AreaChart>
+          <Tooltip content={<CustomTooltip />} />
+          {hasMultipleStores && <Legend />}
+          
+          {storeNames.map((storeName, index) => (
+            <Line
+              key={storeName}
+              type="monotone"
+              dataKey={storeName}
+              name={storeName}
+              stroke={STORE_COLORS[index % STORE_COLORS.length]}
+              strokeWidth={2.5}
+              dot={{ 
+                fill: STORE_COLORS[index % STORE_COLORS.length], 
+                strokeWidth: 2, 
+                r: 5,
+                stroke: '#fff'
+              }}
+              activeDot={{ 
+                r: 7, 
+                fill: STORE_COLORS[index % STORE_COLORS.length],
+                stroke: '#fff',
+                strokeWidth: 2
+              }}
+              connectNulls={false}
+            />
+          ))}
+        </LineChart>
       </ResponsiveContainer>
+
+      {/* Legenda s dodatnim info */}
+      {hasMultipleStores && (
+        <div className="mt-4 pt-4 border-t border-neutral-200">
+          <p className="text-xs text-coffee-roast">
+            💡 Svaka linija predstavlja cijene u jednoj trgovini. Praznine znače da nema podataka za taj datum.
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -302,17 +405,16 @@ export function PriceByStoreChart({ coffee, height = 300 }) {
             dataKey="cijena" 
             radius={[0, 8, 8, 0]}
             label={{ 
-              position: 'right', 
+              position: 'insideRight', 
               formatter: (value) => formatPrice(value),
-              fill: '#5A4F3E',
-              fontSize: 12
+              fill: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: 'bold'
             }}
           >
             {barData.map((entry, index) => (
-              <motion.rect
+              <Cell 
                 key={entry.storeId}
-                initial={{ width: 0 }}
-                animate={{ width: 'auto' }}
                 fill={
                   entry.cijena === lowestPrice ? colors.lowest :
                   entry.cijena === highestPrice ? colors.highest :

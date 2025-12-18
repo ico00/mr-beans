@@ -50,7 +50,8 @@ export default function CoffeeDetail() {
     );
   }
 
-  const priceChange = calculatePriceChange(coffee.priceHistory);
+  // Uspoređuj cijene samo iz glavnog dućana kave
+  const priceChange = calculatePriceChange(coffee.priceHistory, coffee.storeId);
   const roastStyle = roastLevels[coffee.roast];
 
   const handleDelete = () => {
@@ -130,7 +131,7 @@ export default function CoffeeDetail() {
           >
             {/* Image */}
             <div className="glass-card rounded-2xl overflow-hidden mb-6">
-              <div className="aspect-square bg-gradient-to-br from-coffee-light/30 to-coffee-cream flex items-center justify-center relative p-4">
+              <div className="aspect-square bg-gradient-to-br from-coffee-light/30 to-coffee-cream flex items-center justify-center p-4">
                 {coffee.image ? (
                   <img 
                     src={coffee.image.startsWith('http') ? coffee.image : `${IMAGES_FOLDER}${coffee.image}`}
@@ -140,19 +141,6 @@ export default function CoffeeDetail() {
                 ) : (
                   <span className="text-9xl">{coffeeTypes[coffee.type]?.icon || '☕'}</span>
                 )}
-                
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  <span className="px-4 py-2 rounded-full text-sm font-semibold bg-white/90 text-coffee-dark backdrop-blur-sm">
-                    {coffee.type}
-                  </span>
-                  <span 
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-white backdrop-blur-sm"
-                    style={{ backgroundColor: roastStyle?.color }}
-                  >
-                    {coffee.roast}
-                  </span>
-                </div>
               </div>
             </div>
 
@@ -237,9 +225,20 @@ export default function CoffeeDetail() {
             {/* Header Info */}
             <div className="glass-card rounded-2xl p-6">
               <p className="text-coffee-roast mb-1">{coffee.brand?.name}</p>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-4">
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-3">
                 {coffee.name}
               </h1>
+              
+              {/* Type & Roast */}
+              <div className="flex items-center gap-4 text-sm mb-4">
+                <span className="text-coffee-roast">
+                  <span className="font-medium text-coffee-dark">{coffee.type}</span>
+                </span>
+                <span className="text-neutral-300">|</span>
+                <span className="text-coffee-roast">
+                  Prženje: <span className="font-medium" style={{ color: roastStyle?.color }}>{coffee.roast}</span>
+                </span>
+              </div>
               
               {/* Rating */}
               <div className="mb-6">
@@ -304,16 +303,27 @@ export default function CoffeeDetail() {
                 </div>
               </div>
               
-              <div className="h-4 bg-neutral-200 rounded-full overflow-hidden">
+              {/* Slider s dvije boje - narančasta (Arabica) i tamno smeđa (Robusta) */}
+              <div className="h-4 bg-neutral-200 rounded-full overflow-hidden flex">
                 <div 
-                  className="h-full bg-gradient-to-r from-coffee-light to-coffee-dark rounded-full transition-all duration-500"
-                  style={{ width: `${coffee.arabicaPercentage}%` }}
+                  className="h-full bg-amber-500 transition-all duration-500"
+                  style={{ 
+                    width: `${coffee.arabicaPercentage}%`,
+                    borderRadius: coffee.robustaPercentage === 0 ? '9999px' : '9999px 0 0 9999px'
+                  }}
+                />
+                <div 
+                  className="h-full bg-amber-900 transition-all duration-500"
+                  style={{ 
+                    width: `${coffee.robustaPercentage}%`,
+                    borderRadius: coffee.arabicaPercentage === 0 ? '9999px' : '0 9999px 9999px 0'
+                  }}
                 />
               </div>
               
               <div className="flex justify-between mt-2 text-xs text-coffee-roast">
-                <span>Blago, voćno</span>
-                <span>Snažno, gorko</span>
+                <span>Arabica (blago, voćno)</span>
+                <span>Robusta (snažno, gorko)</span>
               </div>
             </div>
 

@@ -37,34 +37,32 @@ export default function CoffeeFilters({ filters, setFilters }) {
       className="glass-card rounded-2xl p-4 md:p-6 mb-6"
     >
       {/* Search and Quick Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Search - veći i vidljiviji */}
-        <div className="relative flex-1 min-w-0">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-coffee-cream rounded-full flex items-center justify-center">
-            <Search className="w-5 h-5 text-coffee-dark" />
-          </div>
+      <div className="flex flex-col lg:flex-row gap-3 items-stretch">
+        {/* Search - zauzima većinu prostora */}
+        <div className="relative flex-[3] min-w-0">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-coffee-roast" />
           <input
             type="text"
             placeholder="Pretraži po nazivu ili brendu..."
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="w-full pl-16 pr-4 py-4 text-base bg-white border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-coffee-light focus:border-coffee-light transition-all placeholder:text-neutral-400"
+            className="w-full h-full pl-12 pr-10 py-3 text-base bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-coffee-light focus:border-coffee-light transition-all placeholder:text-neutral-400"
           />
           {filters.search && (
             <button
               onClick={() => handleFilterChange('search', '')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-neutral-100 text-neutral-400 hover:text-coffee-dark transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-neutral-100 text-neutral-400 hover:text-coffee-dark transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           )}
         </div>
         
-        {/* Quick Type Filter */}
+        {/* Quick Type Filter - kompaktni */}
         <select
           value={filters.type}
           onChange={(e) => handleFilterChange('type', e.target.value)}
-          className="form-input md:w-48"
+          className="px-3 py-3 bg-white border border-neutral-200 rounded-xl text-sm focus:ring-2 focus:ring-coffee-light focus:border-coffee-light transition-all w-full lg:w-36"
         >
           <option value="">Sve vrste</option>
           {coffeeTypes.map(type => (
@@ -72,11 +70,11 @@ export default function CoffeeFilters({ filters, setFilters }) {
           ))}
         </select>
         
-        {/* Quick Roast Filter */}
+        {/* Quick Roast Filter - kompaktni */}
         <select
           value={filters.roast}
           onChange={(e) => handleFilterChange('roast', e.target.value)}
-          className="form-input md:w-40"
+          className="px-3 py-3 bg-white border border-neutral-200 rounded-xl text-sm focus:ring-2 focus:ring-coffee-light focus:border-coffee-light transition-all w-full lg:w-32"
         >
           <option value="">Sva prženja</option>
           {roastTypes.map(roast => (
@@ -84,13 +82,13 @@ export default function CoffeeFilters({ filters, setFilters }) {
           ))}
         </select>
         
-        {/* Advanced Toggle */}
+        {/* Advanced Toggle - kompaktni */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`btn-secondary flex items-center gap-2 ${showAdvanced ? 'bg-coffee-light/30' : ''}`}
+          className={`flex items-center justify-center gap-2 px-4 py-3 border border-neutral-200 rounded-xl text-sm font-medium transition-all hover:bg-coffee-cream/30 ${showAdvanced ? 'bg-coffee-light/30 border-coffee-light' : 'bg-white'}`}
         >
           <Filter className="w-4 h-4" />
-          <span className="hidden sm:inline">Filtri</span>
+          <span>Filtri</span>
           {activeFiltersCount > 0 && (
             <span className="bg-coffee-dark text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {activeFiltersCount}

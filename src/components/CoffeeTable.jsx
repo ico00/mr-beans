@@ -59,7 +59,7 @@ export default function CoffeeTable({ coffees }) {
     if (sortBy !== column) return null;
     // Strelica uvijek prema gore kad je stupac sortiran (označava da je aktivan)
     return (
-      <ChevronUp className={`w-4 h-4 inline ml-1 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+      <ChevronUp className={`w-4 h-4 flex-shrink-0 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
     );
   };
 
@@ -81,38 +81,48 @@ export default function CoffeeTable({ coffees }) {
         <thead>
           <tr>
             <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
               onClick={() => handleSort('brand')}
             >
-              Brend <SortIcon column="brand" />
+              <span className="inline-flex items-center gap-1">
+                Brend <SortIcon column="brand" />
+              </span>
             </th>
             <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
               onClick={() => handleSort('name')}
             >
-              Naziv <SortIcon column="name" />
+              <span className="inline-flex items-center gap-1">
+                Naziv <SortIcon column="name" />
+              </span>
             </th>
             <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
               onClick={() => handleSort('type')}
             >
-              Vrsta <SortIcon column="type" />
+              <span className="inline-flex items-center gap-1">
+                Vrsta <SortIcon column="type" />
+              </span>
             </th>
-            <th>Prženje</th>
-            <th>Arabica / Robusta</th>
+            <th className="whitespace-nowrap">Prženje</th>
+            <th className="whitespace-nowrap">Arabica / Robusta</th>
             <th>Država</th>
             <th>Trgovina</th>
             <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
               onClick={() => handleSort('price')}
             >
-              Cijena <SortIcon column="price" />
+              <span className="inline-flex items-center gap-1">
+                Cijena <SortIcon column="price" />
+              </span>
             </th>
             <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
               onClick={() => handleSort('rating')}
             >
-              Ocjena <SortIcon column="rating" />
+              <span className="inline-flex items-center gap-1">
+                Ocjena <SortIcon column="rating" />
+              </span>
             </th>
             <th>Akcije</th>
           </tr>
@@ -142,21 +152,24 @@ export default function CoffeeTable({ coffees }) {
                 </span>
               </td>
               <td>
-                <div className="flex items-center gap-2">
-                  <div className="w-20 h-3 bg-neutral-200 rounded-full overflow-hidden flex">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-amber-600 font-medium w-8 text-right">
+                    {coffee.arabicaPercentage}%
+                  </span>
+                  <div className="w-16 h-3 bg-neutral-200 rounded-full overflow-hidden flex">
                     <div 
-                      className="h-full bg-gradient-to-r from-amber-400 to-amber-500"
+                      className="h-full bg-amber-500"
                       style={{ width: `${coffee.arabicaPercentage}%` }}
                       title={`Arabica ${coffee.arabicaPercentage}%`}
                     />
                     <div 
-                      className="h-full bg-gradient-to-r from-amber-800 to-amber-900"
+                      className="h-full bg-amber-900"
                       style={{ width: `${coffee.robustaPercentage}%` }}
                       title={`Robusta ${coffee.robustaPercentage}%`}
                     />
                   </div>
-                  <span className="text-xs text-coffee-roast whitespace-nowrap">
-                    {coffee.arabicaPercentage}%
+                  <span className="text-xs text-amber-900 font-medium w-8">
+                    {coffee.robustaPercentage}%
                   </span>
                 </div>
               </td>

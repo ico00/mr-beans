@@ -5,7 +5,8 @@ import CoffeeBeanRating from './CoffeeBeanRating';
 import { formatPrice, formatWeight, formatPricePerKg, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
 
 export default function CoffeeCard({ coffee, index = 0 }) {
-  const priceChange = calculatePriceChange(coffee.priceHistory);
+  // Uspoređuj cijene samo iz glavnog dućana kave
+  const priceChange = calculatePriceChange(coffee.priceHistory, coffee.storeId);
   const roastStyle = roastLevels[coffee.roast];
 
   return (
@@ -84,13 +85,17 @@ export default function CoffeeCard({ coffee, index = 0 }) {
             {/* Arabica/Robusta */}
             <div className="mb-4">
               <div className="flex justify-between text-xs mb-1">
-                <span>Arabica {coffee.arabicaPercentage}%</span>
-                <span>Robusta {coffee.robustaPercentage}%</span>
+                <span className="text-amber-600">Arabica {coffee.arabicaPercentage}%</span>
+                <span className="text-amber-900">Robusta {coffee.robustaPercentage}%</span>
               </div>
-              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden flex">
                 <div 
-                  className="h-full bg-gradient-to-r from-coffee-light to-coffee-dark rounded-full transition-all duration-500"
+                  className="h-full bg-amber-500 transition-all duration-500"
                   style={{ width: `${coffee.arabicaPercentage}%` }}
+                />
+                <div 
+                  className="h-full bg-amber-900 transition-all duration-500"
+                  style={{ width: `${coffee.robustaPercentage}%` }}
                 />
               </div>
             </div>
