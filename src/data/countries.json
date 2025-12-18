@@ -138,6 +138,18 @@
       },
       "coffeeProduction": "",
       "varieties": []
+    },
+    {
+      "id": "indija",
+      "name": "Indija",
+      "flag": "🌍",
+      "region": "Nepoznato",
+      "coordinates": {
+        "lat": 0,
+        "lng": 0
+      },
+      "coffeeProduction": "",
+      "varieties": []
     }
   ]
 }

@@ -8,7 +8,7 @@ import { useCoffeeData } from '../hooks/useCoffeeData';
 
 export default function CoffeeTable({ coffees }) {
   const { deleteCoffee } = useCoffeeData();
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('brand');
   const [sortOrder, setSortOrder] = useState('asc');
 
   const handleSort = (column) => {
@@ -57,9 +57,10 @@ export default function CoffeeTable({ coffees }) {
 
   const SortIcon = ({ column }) => {
     if (sortBy !== column) return null;
-    return sortOrder === 'asc' ? 
-      <ChevronUp className="w-4 h-4 inline ml-1" /> : 
-      <ChevronDown className="w-4 h-4 inline ml-1" />;
+    // Strelica uvijek prema gore kad je stupac sortiran (označava da je aktivan)
+    return (
+      <ChevronUp className={`w-4 h-4 inline ml-1 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+    );
   };
 
   const handleDelete = (e, id) => {
@@ -81,15 +82,15 @@ export default function CoffeeTable({ coffees }) {
           <tr>
             <th 
               className="cursor-pointer hover:bg-coffee-roast transition-colors"
-              onClick={() => handleSort('name')}
-            >
-              Naziv <SortIcon column="name" />
-            </th>
-            <th 
-              className="cursor-pointer hover:bg-coffee-roast transition-colors"
               onClick={() => handleSort('brand')}
             >
               Brend <SortIcon column="brand" />
+            </th>
+            <th 
+              className="cursor-pointer hover:bg-coffee-roast transition-colors"
+              onClick={() => handleSort('name')}
+            >
+              Naziv <SortIcon column="name" />
             </th>
             <th 
               className="cursor-pointer hover:bg-coffee-roast transition-colors"
@@ -98,7 +99,7 @@ export default function CoffeeTable({ coffees }) {
               Vrsta <SortIcon column="type" />
             </th>
             <th>Prženje</th>
-            <th>Arabica</th>
+            <th>Arabica / Robusta</th>
             <th>Država</th>
             <th>Trgovina</th>
             <th 
@@ -125,8 +126,8 @@ export default function CoffeeTable({ coffees }) {
               transition={{ delay: index * 0.05 }}
               className="hover:bg-coffee-cream/50 transition-colors"
             >
-              <td className="font-semibold text-coffee-dark">{coffee.name}</td>
-              <td>{coffee.brand?.name}</td>
+              <td className="font-semibold text-coffee-dark">{coffee.brand?.name}</td>
+              <td className="text-coffee-dark">{coffee.name}</td>
               <td>
                 <span className="px-2 py-1 rounded-full text-xs bg-coffee-light/30 text-coffee-dark">
                   {coffee.type}
@@ -142,20 +143,28 @@ export default function CoffeeTable({ coffees }) {
               </td>
               <td>
                 <div className="flex items-center gap-2">
-                  <div className="w-16 h-2 bg-neutral-200 rounded-full overflow-hidden">
+                  <div className="w-20 h-3 bg-neutral-200 rounded-full overflow-hidden flex">
                     <div 
-                      className="h-full bg-coffee-dark rounded-full"
+                      className="h-full bg-gradient-to-r from-amber-400 to-amber-500"
                       style={{ width: `${coffee.arabicaPercentage}%` }}
+                      title={`Arabica ${coffee.arabicaPercentage}%`}
+                    />
+                    <div 
+                      className="h-full bg-gradient-to-r from-amber-800 to-amber-900"
+                      style={{ width: `${coffee.robustaPercentage}%` }}
+                      title={`Robusta ${coffee.robustaPercentage}%`}
                     />
                   </div>
-                  <span className="text-xs">{coffee.arabicaPercentage}%</span>
+                  <span className="text-xs text-coffee-roast whitespace-nowrap">
+                    {coffee.arabicaPercentage}%
+                  </span>
                 </div>
               </td>
               <td>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-col gap-0.5">
                   {coffee.countries?.length > 0 ? (
                     coffee.countries.map(country => (
-                      <span key={country.id} className="whitespace-nowrap">
+                      <span key={country.id} className="whitespace-nowrap text-sm">
                         {country.flag} {country.name}
                       </span>
                     ))
@@ -167,7 +176,7 @@ export default function CoffeeTable({ coffees }) {
               <td>{coffee.store?.name}</td>
               <td className="font-bold text-coffee-dark">{formatPrice(coffee.priceEUR)}</td>
               <td>
-                <CoffeeBeanRatingSmall rating={coffee.rating} />
+                <CoffeeBeanRatingSmall rating={coffee.rating} size={18} />
               </td>
               <td>
                 <div className="flex items-center gap-1">

@@ -1,267 +1,6 @@
 {
   "coffees": [
     {
-      "id": "1",
-      "image": "lavazza-oro.jpg",
-      "brandId": "1",
-      "name": "Qualità Oro",
-      "type": "Zrno",
-      "roast": "Medium",
-      "arabicaPercentage": 100,
-      "robustaPercentage": 0,
-      "countryIds": [
-        "brazil"
-      ],
-      "storeId": "1",
-      "priceEUR": 18.99,
-      "weightG": 1000,
-      "rating": 5,
-      "priceHistory": [
-        {
-          "id": "1705312800001",
-          "date": "2024-01-15",
-          "price": 17.99,
-          "storeId": "1"
-        },
-        {
-          "id": "1709244000002",
-          "date": "2024-03-01",
-          "price": 18.49,
-          "storeId": "1"
-        },
-        {
-          "id": "1718395200003",
-          "date": "2024-06-15",
-          "price": 18.99,
-          "storeId": "1"
-        },
-        {
-          "id": "1718395200004",
-          "date": "2024-06-20",
-          "price": 19.49,
-          "storeId": "2"
-        },
-        {
-          "id": "1718395200005",
-          "date": "2024-07-01",
-          "price": 17.99,
-          "storeId": "3"
-        }
-      ],
-      "createdAt": "2024-01-15"
-    },
-    {
-      "id": "2",
-      "image": "illy-classico.jpg",
-      "brandId": "2",
-      "name": "Classico Espresso",
-      "type": "Mljevena kava",
-      "roast": "Medium",
-      "arabicaPercentage": 100,
-      "robustaPercentage": 0,
-      "countryIds": [
-        "ethiopia"
-      ],
-      "storeId": "2",
-      "priceEUR": 12.49,
-      "weightG": 250,
-      "rating": 4,
-      "priceHistory": [
-        {
-          "id": "1706745600001",
-          "date": "2024-02-01",
-          "price": 11.99,
-          "storeId": "2"
-        },
-        {
-          "id": "1713139200002",
-          "date": "2024-04-15",
-          "price": 12.29,
-          "storeId": "2"
-        },
-        {
-          "id": "1719792000003",
-          "date": "2024-07-01",
-          "price": 12.49,
-          "storeId": "2"
-        },
-        {
-          "id": "1719792000004",
-          "date": "2024-07-15",
-          "price": 11.49,
-          "storeId": "1"
-        }
-      ],
-      "createdAt": "2024-02-01"
-    },
-    {
-      "id": "3",
-      "image": "franck-jubilarna.jpg",
-      "brandId": "3",
-      "name": "Jubilarna",
-      "type": "Mljevena kava",
-      "roast": "Dark",
-      "arabicaPercentage": 70,
-      "robustaPercentage": 30,
-      "countryIds": [
-        "colombia",
-        "brazil"
-      ],
-      "storeId": "1",
-      "priceEUR": 7.99,
-      "weightG": 250,
-      "rating": 4,
-      "priceHistory": [
-        {
-          "id": "1704067200001",
-          "date": "2024-01-01",
-          "price": 6.99,
-          "storeId": "1"
-        },
-        {
-          "id": "1714521600002",
-          "date": "2024-05-01",
-          "price": 7.49,
-          "storeId": "1"
-        },
-        {
-          "id": "1722470400003",
-          "date": "2024-08-01",
-          "price": 7.99,
-          "storeId": "1"
-        },
-        {
-          "id": "1722470400004",
-          "date": "2024-08-10",
-          "price": 6.49,
-          "storeId": "2"
-        }
-      ],
-      "createdAt": "2024-01-01"
-    },
-    {
-      "id": "4",
-      "image": "lavazza-crema.jpg",
-      "brandId": "1",
-      "name": "Crema e Gusto",
-      "type": "Nespresso kapsula",
-      "roast": "Dark",
-      "arabicaPercentage": 30,
-      "robustaPercentage": 70,
-      "countryIds": [
-        "vietnam",
-        "indonesia"
-      ],
-      "storeId": "3",
-      "priceEUR": 5.99,
-      "weightG": 52,
-      "rating": 3,
-      "priceHistory": [
-        {
-          "id": "1709244000001",
-          "date": "2024-03-01",
-          "price": 5.49,
-          "storeId": "3"
-        },
-        {
-          "id": "1717200000002",
-          "date": "2024-06-01",
-          "price": 5.79,
-          "storeId": "3"
-        },
-        {
-          "id": "1725148800003",
-          "date": "2024-09-01",
-          "price": 5.99,
-          "storeId": "3"
-        }
-      ],
-      "createdAt": "2024-03-01"
-    },
-    {
-      "id": "5",
-      "image": "elis-premium.jpg",
-      "brandId": "4",
-      "name": "Premium Selection",
-      "type": "Zrno",
-      "roast": "Blonde",
-      "arabicaPercentage": 80,
-      "robustaPercentage": 20,
-      "countryIds": [
-        "kenya",
-        "ethiopia"
-      ],
-      "storeId": "4",
-      "priceEUR": 24.99,
-      "weightG": 500,
-      "rating": 5,
-      "priceHistory": [
-        {
-          "id": "1707955200001",
-          "date": "2024-02-15",
-          "price": 23.99,
-          "storeId": "4"
-        },
-        {
-          "id": "1715731200002",
-          "date": "2024-05-15",
-          "price": 24.49,
-          "storeId": "4"
-        },
-        {
-          "id": "1723680000003",
-          "date": "2024-08-15",
-          "price": 24.99,
-          "storeId": "4"
-        },
-        {
-          "id": "1723680000004",
-          "date": "2024-09-01",
-          "price": 22.99,
-          "storeId": "3"
-        }
-      ],
-      "createdAt": "2024-02-15"
-    },
-    {
-      "id": "6",
-      "image": "illy-forte.jpg",
-      "brandId": "2",
-      "name": "Forte",
-      "type": "Nespresso kapsula",
-      "roast": "Dark",
-      "arabicaPercentage": 100,
-      "robustaPercentage": 0,
-      "countryIds": [
-        "guatemala"
-      ],
-      "storeId": "5",
-      "priceEUR": 8.99,
-      "weightG": 57,
-      "rating": 4,
-      "priceHistory": [
-        {
-          "id": "1711929600001",
-          "date": "2024-04-01",
-          "price": 8.49,
-          "storeId": "5"
-        },
-        {
-          "id": "1719792000002",
-          "date": "2024-07-01",
-          "price": 8.79,
-          "storeId": "5"
-        },
-        {
-          "id": "1727740800003",
-          "date": "2024-10-01",
-          "price": 8.99,
-          "storeId": "5"
-        }
-      ],
-      "createdAt": "2024-04-01"
-    },
-    {
       "brandId": "1",
       "name": "La Reserva de ¡Tierra! Selection Espresso",
       "type": "Zrno",
@@ -311,6 +50,77 @@
           "date": "2025-12-18",
           "price": 34.09,
           "storeId": "3"
+        },
+        {
+          "id": "1766084527680",
+          "date": "2025-12-18",
+          "price": 37.99,
+          "storeId": "5"
+        }
+      ],
+      "createdAt": "2025-12-18"
+    },
+    {
+      "brandId": "1",
+      "name": "La Reserva de ¡Tierra! Brasile blend Espresso",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 70,
+      "countryIds": [
+        "brazil"
+      ],
+      "storeId": "3",
+      "priceEUR": 34.09,
+      "weightG": 1000,
+      "rating": 5,
+      "image": "1766084879730-2214-d-tierra_brasile-beans-_2.png.png",
+      "robustaPercentage": 30,
+      "id": "1766084899441",
+      "priceHistory": [
+        {
+          "id": "1766084899441",
+          "date": "2025-12-18",
+          "price": 34.09,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2025-12-18"
+    },
+    {
+      "brandId": "1",
+      "name": "Crema e Aroma",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 50,
+      "countryIds": [
+        "indija",
+        "brazil"
+      ],
+      "storeId": "3",
+      "priceEUR": 23.39,
+      "weightG": 1000,
+      "rating": 3,
+      "image": "1766085528385-2552-d-crema_e_aroma-beans-_2.png",
+      "robustaPercentage": 50,
+      "id": "1766085530050",
+      "priceHistory": [
+        {
+          "id": "1766085530051",
+          "date": "2025-12-18",
+          "price": 23.39,
+          "storeId": "3"
+        },
+        {
+          "id": "1766085560926",
+          "date": "2025-12-18",
+          "price": 37.39,
+          "storeId": "4"
+        },
+        {
+          "id": "1766085588366",
+          "date": "2025-12-18",
+          "price": 32.99,
+          "storeId": "5"
         }
       ],
       "createdAt": "2025-12-18"

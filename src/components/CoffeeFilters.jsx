@@ -38,16 +38,26 @@ export default function CoffeeFilters({ filters, setFilters }) {
     >
       {/* Search and Quick Filters */}
       <div className="flex flex-col md:flex-row gap-4">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-coffee-roast" />
+        {/* Search - veći i vidljiviji */}
+        <div className="relative flex-1 min-w-0">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-coffee-cream rounded-full flex items-center justify-center">
+            <Search className="w-5 h-5 text-coffee-dark" />
+          </div>
           <input
             type="text"
             placeholder="Pretraži po nazivu ili brendu..."
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="form-input pl-12"
+            className="w-full pl-16 pr-4 py-4 text-base bg-white border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-coffee-light focus:border-coffee-light transition-all placeholder:text-neutral-400"
           />
+          {filters.search && (
+            <button
+              onClick={() => handleFilterChange('search', '')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-neutral-100 text-neutral-400 hover:text-coffee-dark transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
         
         {/* Quick Type Filter */}
