@@ -1,0 +1,77 @@
+{
+  "countries": [
+    { 
+      "id": "brazil", 
+      "name": "Brazil", 
+      "flag": "🇧🇷",
+      "region": "Južna Amerika",
+      "coordinates": { "lat": -14.235, "lng": -51.9253 },
+      "coffeeProduction": "Najveći proizvođač kave na svijetu",
+      "varieties": ["Bourbon", "Catuai", "Mundo Novo"]
+    },
+    { 
+      "id": "ethiopia", 
+      "name": "Etiopija", 
+      "flag": "🇪🇹",
+      "region": "Afrika",
+      "coordinates": { "lat": 9.145, "lng": 40.4897 },
+      "coffeeProduction": "Domovina kave",
+      "varieties": ["Yirgacheffe", "Sidamo", "Harrar"]
+    },
+    { 
+      "id": "colombia", 
+      "name": "Kolumbija", 
+      "flag": "🇨🇴",
+      "region": "Južna Amerika",
+      "coordinates": { "lat": 4.5709, "lng": -74.2973 },
+      "coffeeProduction": "Treći najveći proizvođač",
+      "varieties": ["Caturra", "Castillo", "Typica"]
+    },
+    { 
+      "id": "vietnam", 
+      "name": "Vijetnam", 
+      "flag": "🇻🇳",
+      "region": "Azija",
+      "coordinates": { "lat": 14.0583, "lng": 108.2772 },
+      "coffeeProduction": "Drugi najveći proizvođač",
+      "varieties": ["Robusta", "Catimor"]
+    },
+    { 
+      "id": "kenya", 
+      "name": "Kenija", 
+      "flag": "🇰🇪",
+      "region": "Afrika",
+      "coordinates": { "lat": -1.2921, "lng": 36.8219 },
+      "coffeeProduction": "Poznata po AA gradaciji",
+      "varieties": ["SL28", "SL34", "Ruiru 11"]
+    },
+    { 
+      "id": "guatemala", 
+      "name": "Gvatemala", 
+      "flag": "🇬🇹",
+      "region": "Srednja Amerika",
+      "coordinates": { "lat": 15.7835, "lng": -90.2308 },
+      "coffeeProduction": "Vulkanska kava visoke kvalitete",
+      "varieties": ["Bourbon", "Caturra", "Typica"]
+    },
+    { 
+      "id": "costa_rica", 
+      "name": "Kostarika", 
+      "flag": "🇨🇷",
+      "region": "Srednja Amerika",
+      "coordinates": { "lat": 9.7489, "lng": -83.7534 },
+      "coffeeProduction": "100% Arabica zakonom",
+      "varieties": ["Caturra", "Catuai", "Geisha"]
+    },
+    { 
+      "id": "indonesia", 
+      "name": "Indonezija", 
+      "flag": "🇮🇩",
+      "region": "Azija",
+      "coordinates": { "lat": -0.7893, "lng": 113.9213 },
+      "coffeeProduction": "Poznat po Kopi Luwak",
+      "varieties": ["Sumatra Mandheling", "Java", "Sulawesi"]
+    }
+  ]
+}
+

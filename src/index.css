@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+/* Coffee Theme - Custom CSS Variables */
+:root {
+  /* Primary Coffee Colors */
+  --coffee-cream: #F5F0E8;
+  --coffee-light: #D4A574;
+  --coffee-medium: #8B6914;
+  --coffee-dark: #3C2415;
+  --coffee-espresso: #1A0F0A;
+  --coffee-roast: #6F4E37;
+  
+  /* Accent Colors */
+  --accent-gold: #C9A227;
+  --accent-copper: #B87333;
+  --accent-sage: #8A9A5B;
+  
+  /* Neutrals */
+  --neutral-50: #FDFCFB;
+  --neutral-100: #F5F0E8;
+  --neutral-200: #E8DFD1;
+  --neutral-300: #D4C4A8;
+  --neutral-400: #B8A07A;
+  --neutral-500: #9A8566;
+  --neutral-600: #7A6B52;
+  --neutral-700: #5A4F3E;
+  --neutral-800: #3A332A;
+  --neutral-900: #1A1612;
+  
+  /* Semantic */
+  --success: #4A7C59;
+  --warning: #D4A574;
+  --error: #A94442;
+  --info: #5B7C99;
+}
+
+/* Custom Theme Extensions */
+@theme {
+  --color-coffee-cream: var(--coffee-cream);
+  --color-coffee-light: var(--coffee-light);
+  --color-coffee-medium: var(--coffee-medium);
+  --color-coffee-dark: var(--coffee-dark);
+  --color-coffee-espresso: var(--coffee-espresso);
+  --color-coffee-roast: var(--coffee-roast);
+  
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-copper: var(--accent-copper);
+  --color-accent-sage: var(--accent-sage);
+  
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--coffee-cream) 0%, var(--neutral-200) 100%);
+  color: var(--coffee-espresso);
+  min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-200);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--coffee-roast);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--coffee-dark);
+}
+
+/* Utility Classes */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.coffee-gradient {
+  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-roast) 50%, var(--coffee-light) 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-roast) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes steam {
+  0% { opacity: 0; transform: translateY(0) scale(1); }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-30px) scale(1.5); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-steam {
+  animation: steam 2s ease-out infinite;
+}
+
+/* Coffee Bean Rating */
+.coffee-bean-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.coffee-bean {
+  width: 24px;
+  height: 24px;
+  transition: all 0.2s ease;
+}
+
+.coffee-bean:hover {
+  transform: scale(1.2);
+}
+
+/* Map Styles */
+.map-country {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.map-country:hover {
+  filter: brightness(1.2);
+  transform: scale(1.02);
+}
+
+/* Form Styles */
+.form-input {
+  background: white;
+  border: 2px solid var(--neutral-300);
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--coffee-roast);
+  box-shadow: 0 0 0 4px rgba(111, 78, 55, 0.1);
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--coffee-dark);
+  margin-bottom: 6px;
+  display: block;
+  font-size: 0.875rem;
+}
+
+/* Card hover effects */
+.coffee-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.coffee-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(26, 15, 10, 0.15);
+}
+
+/* Table styles */
+.coffee-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.coffee-table th {
+  background: var(--coffee-dark);
+  color: var(--coffee-cream);
+  font-weight: 600;
+  padding: 16px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+}
+
+.coffee-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.coffee-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.coffee-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--neutral-200);
+  background: white;
+}
+
+.coffee-table tr:hover td {
+  background: var(--neutral-100);
+}
+
+.coffee-table tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.coffee-table tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-roast) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(60, 36, 21, 0.3);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--coffee-dark);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid var(--coffee-dark);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--coffee-dark);
+  color: white;
+}
