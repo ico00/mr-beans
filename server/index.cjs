@@ -92,8 +92,10 @@ app.post('/api/coffees', (req, res) => {
     ...coffeeData,
     id: String(Date.now()),
     priceHistory: [{ 
+      id: String(Date.now()),
       date: new Date().toISOString().split('T')[0], 
-      price: coffeeData.priceEUR 
+      price: coffeeData.priceEUR,
+      storeId: coffeeData.storeId || null
     }],
     createdAt: new Date().toISOString().split('T')[0]
   };
@@ -128,8 +130,10 @@ app.put('/api/coffees/:id', (req, res) => {
   // Ako se cijena promijenila, dodaj u povijest
   if (updates.priceEUR && updates.priceEUR !== existingCoffee.priceEUR) {
     const newPriceEntry = {
+      id: String(Date.now()),
       date: new Date().toISOString().split('T')[0],
-      price: updates.priceEUR
+      price: updates.priceEUR,
+      storeId: updates.storeId || existingCoffee.storeId || null
     };
     updates.priceHistory = [...(existingCoffee.priceHistory || []), newPriceEntry];
   }
@@ -140,6 +144,95 @@ app.put('/api/coffees/:id', (req, res) => {
   if (writeJsonFile('coffees.json', data)) {
     console.log(`☕ Kava ažurirana: ${data.coffees[coffeeIndex].name}`);
     res.json(data.coffees[coffeeIndex]);
+  } else {
+    res.status(500).json({ error: 'Greška pri spremanju' });
+  }
+});
+
+// ============ POVIJEST CIJENA ============
+
+// Dodaj novi unos cijene za kavu (s trgovinom i datumom)
+app.post('/api/coffees/:id/price', (req, res) => {
+  const coffeeId = req.params.id;
+  const { date, price, storeId } = req.body;
+  const data = readJsonFile('coffees.json');
+
+  if (!data) {
+    return res.status(500).json({ error: 'Greška pri čitanju podataka' });
+  }
+
+  // Validacija
+  if (!date || !price || !storeId) {
+    return res.status(400).json({ error: 'Potrebni su datum, cijena i trgovina' });
+  }
+
+  const coffeeIndex = data.coffees.findIndex(c => c.id === coffeeId);
+  if (coffeeIndex === -1) {
+    return res.status(404).json({ error: 'Kava nije pronađena' });
+  }
+
+  const coffee = data.coffees[coffeeIndex];
+  
+  // Kreiraj novi unos cijene
+  const newPriceEntry = {
+    id: String(Date.now()),
+    date: date,
+    price: Number(price),
+    storeId: storeId
+  };
+
+  // Dodaj u povijest cijena
+  if (!coffee.priceHistory) {
+    coffee.priceHistory = [];
+  }
+  coffee.priceHistory.push(newPriceEntry);
+
+  // Ažuriraj trenutnu cijenu ako je novi unos najnoviji
+  const sortedHistory = [...coffee.priceHistory].sort((a, b) => 
+    new Date(b.date) - new Date(a.date)
+  );
+  if (sortedHistory[0].id === newPriceEntry.id) {
+    coffee.priceEUR = newPriceEntry.price;
+    coffee.storeId = newPriceEntry.storeId;
+  }
+
+  data.coffees[coffeeIndex] = coffee;
+
+  if (writeJsonFile('coffees.json', data)) {
+    console.log(`💰 Nova cijena dodana za: ${coffee.name} - ${price}€ @ ${storeId}`);
+    res.json(coffee);
+  } else {
+    res.status(500).json({ error: 'Greška pri spremanju' });
+  }
+});
+
+// Obriši unos iz povijesti cijena
+app.delete('/api/coffees/:id/price/:priceId', (req, res) => {
+  const { id: coffeeId, priceId } = req.params;
+  const data = readJsonFile('coffees.json');
+
+  if (!data) {
+    return res.status(500).json({ error: 'Greška pri čitanju podataka' });
+  }
+
+  const coffeeIndex = data.coffees.findIndex(c => c.id === coffeeId);
+  if (coffeeIndex === -1) {
+    return res.status(404).json({ error: 'Kava nije pronađena' });
+  }
+
+  const coffee = data.coffees[coffeeIndex];
+  const priceIndex = coffee.priceHistory?.findIndex(p => p.id === priceId);
+  
+  if (priceIndex === -1 || priceIndex === undefined) {
+    return res.status(404).json({ error: 'Unos cijene nije pronađen' });
+  }
+
+  coffee.priceHistory.splice(priceIndex, 1);
+  data.coffees[coffeeIndex] = coffee;
+
+  if (writeJsonFile('coffees.json', data)) {
+    console.log(`🗑️ Cijena obrisana za: ${coffee.name}`);
+    res.json(coffee);
   } else {
     res.status(500).json({ error: 'Greška pri spremanju' });
   }

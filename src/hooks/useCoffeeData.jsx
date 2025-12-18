@@ -117,6 +117,52 @@ export function CoffeeProvider({ children }) {
     }
   };
 
+  // Dodaj novu cijenu za kavu
+  const addPriceEntry = async (coffeeId, priceData) => {
+    try {
+      const response = await fetch(`${API_BASE}/coffees/${coffeeId}/price`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(priceData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Greška pri dodavanju cijene');
+      }
+
+      const updatedCoffee = await response.json();
+      setCoffees(prev => prev.map(coffee => 
+        coffee.id === coffeeId ? updatedCoffee : coffee
+      ));
+      return updatedCoffee;
+    } catch (err) {
+      console.error('Greška pri dodavanju cijene:', err);
+      throw err;
+    }
+  };
+
+  // Obriši unos iz povijesti cijena
+  const deletePriceEntry = async (coffeeId, priceId) => {
+    try {
+      const response = await fetch(`${API_BASE}/coffees/${coffeeId}/price/${priceId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Greška pri brisanju cijene');
+      }
+
+      const updatedCoffee = await response.json();
+      setCoffees(prev => prev.map(coffee => 
+        coffee.id === coffeeId ? updatedCoffee : coffee
+      ));
+      return updatedCoffee;
+    } catch (err) {
+      console.error('Greška pri brisanju cijene:', err);
+      throw err;
+    }
+  };
+
   // Dodaj novi brend
   const addBrand = async (brandName, logo = '') => {
     try {
@@ -261,6 +307,8 @@ export function CoffeeProvider({ children }) {
     addCoffee,
     updateCoffee,
     deleteCoffee,
+    addPriceEntry,
+    deletePriceEntry,
     addBrand,
     updateBrand,
     addStore,

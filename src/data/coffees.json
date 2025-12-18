@@ -17,16 +17,34 @@
       "rating": 5,
       "priceHistory": [
         {
+          "id": "1705312800001",
           "date": "2024-01-15",
-          "price": 17.99
+          "price": 17.99,
+          "storeId": "1"
         },
         {
+          "id": "1709244000002",
           "date": "2024-03-01",
-          "price": 18.49
+          "price": 18.49,
+          "storeId": "1"
         },
         {
+          "id": "1718395200003",
           "date": "2024-06-15",
-          "price": 18.99
+          "price": 18.99,
+          "storeId": "1"
+        },
+        {
+          "id": "1718395200004",
+          "date": "2024-06-20",
+          "price": 19.49,
+          "storeId": "2"
+        },
+        {
+          "id": "1718395200005",
+          "date": "2024-07-01",
+          "price": 17.99,
+          "storeId": "3"
         }
       ],
       "createdAt": "2024-01-15"
@@ -48,16 +66,28 @@
       "rating": 4,
       "priceHistory": [
         {
+          "id": "1706745600001",
           "date": "2024-02-01",
-          "price": 11.99
+          "price": 11.99,
+          "storeId": "2"
         },
         {
+          "id": "1713139200002",
           "date": "2024-04-15",
-          "price": 12.29
+          "price": 12.29,
+          "storeId": "2"
         },
         {
+          "id": "1719792000003",
           "date": "2024-07-01",
-          "price": 12.49
+          "price": 12.49,
+          "storeId": "2"
+        },
+        {
+          "id": "1719792000004",
+          "date": "2024-07-15",
+          "price": 11.49,
+          "storeId": "1"
         }
       ],
       "createdAt": "2024-02-01"
@@ -80,16 +110,28 @@
       "rating": 4,
       "priceHistory": [
         {
+          "id": "1704067200001",
           "date": "2024-01-01",
-          "price": 6.99
+          "price": 6.99,
+          "storeId": "1"
         },
         {
+          "id": "1714521600002",
           "date": "2024-05-01",
-          "price": 7.49
+          "price": 7.49,
+          "storeId": "1"
         },
         {
+          "id": "1722470400003",
           "date": "2024-08-01",
-          "price": 7.99
+          "price": 7.99,
+          "storeId": "1"
+        },
+        {
+          "id": "1722470400004",
+          "date": "2024-08-10",
+          "price": 6.49,
+          "storeId": "2"
         }
       ],
       "createdAt": "2024-01-01"
@@ -112,16 +154,22 @@
       "rating": 3,
       "priceHistory": [
         {
+          "id": "1709244000001",
           "date": "2024-03-01",
-          "price": 5.49
+          "price": 5.49,
+          "storeId": "3"
         },
         {
+          "id": "1717200000002",
           "date": "2024-06-01",
-          "price": 5.79
+          "price": 5.79,
+          "storeId": "3"
         },
         {
+          "id": "1725148800003",
           "date": "2024-09-01",
-          "price": 5.99
+          "price": 5.99,
+          "storeId": "3"
         }
       ],
       "createdAt": "2024-03-01"
@@ -144,16 +192,28 @@
       "rating": 5,
       "priceHistory": [
         {
+          "id": "1707955200001",
           "date": "2024-02-15",
-          "price": 23.99
+          "price": 23.99,
+          "storeId": "4"
         },
         {
+          "id": "1715731200002",
           "date": "2024-05-15",
-          "price": 24.49
+          "price": 24.49,
+          "storeId": "4"
         },
         {
+          "id": "1723680000003",
           "date": "2024-08-15",
-          "price": 24.99
+          "price": 24.99,
+          "storeId": "4"
+        },
+        {
+          "id": "1723680000004",
+          "date": "2024-09-01",
+          "price": 22.99,
+          "storeId": "3"
         }
       ],
       "createdAt": "2024-02-15"
@@ -175,16 +235,22 @@
       "rating": 4,
       "priceHistory": [
         {
+          "id": "1711929600001",
           "date": "2024-04-01",
-          "price": 8.49
+          "price": 8.49,
+          "storeId": "5"
         },
         {
+          "id": "1719792000002",
           "date": "2024-07-01",
-          "price": 8.79
+          "price": 8.79,
+          "storeId": "5"
         },
         {
+          "id": "1727740800003",
           "date": "2024-10-01",
-          "price": 8.99
+          "price": 8.99,
+          "storeId": "5"
         }
       ],
       "createdAt": "2024-04-01"
@@ -196,18 +262,22 @@
       "roast": "Medium",
       "arabicaPercentage": 100,
       "countryIds": [
-        "brazil"
+        "brazil",
+        "honduras",
+        "colombia"
       ],
       "storeId": "3",
       "priceEUR": 34.59,
-      "rating": 3,
-      "image": "1766077622200-71iwJipjiYL._AC_SL1500_.jpg",
+      "rating": 5,
+      "image": "1766082827310-71iwJipjiYL._AC_SL1500_.png",
       "robustaPercentage": 0,
       "id": "1766077450059",
       "priceHistory": [
         {
+          "id": "1734480000001",
           "date": "2025-12-18",
-          "price": 34.59
+          "price": 34.59,
+          "storeId": "3"
         }
       ],
       "createdAt": "2025-12-18"

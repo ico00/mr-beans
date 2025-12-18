@@ -2,11 +2,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft, Edit, Trash2, MapPin, Store, Calendar, 
-  TrendingUp, TrendingDown, Minus, Coffee, Share2 
+  TrendingUp, TrendingDown, Minus, Coffee, Share2, History
 } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import CoffeeBeanRating from '../components/CoffeeBeanRating';
-import PriceChart from '../components/PriceChart';
+import PriceChart, { PriceByStoreChart } from '../components/PriceChart';
+import AddPriceEntry from '../components/AddPriceEntry';
+import PriceHistoryTable from '../components/PriceHistoryTable';
 import { formatPrice, formatDate, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
 
 export default function CoffeeDetail() {
@@ -308,26 +310,25 @@ export default function CoffeeDetail() {
             {/* Price History Chart */}
             <PriceChart coffee={coffee} />
 
-            {/* Price History Table */}
-            {coffee.priceHistory && coffee.priceHistory.length > 1 && (
-              <div className="glass-card rounded-2xl p-6">
-                <h3 className="text-lg font-display font-bold text-coffee-dark mb-4">
-                  Povijest cijena
-                </h3>
+            {/* Price By Store Chart */}
+            <PriceByStoreChart coffee={coffee} />
+
+            {/* Add Price Entry */}
+            <div className="glass-card rounded-2xl p-6">
+              <h3 className="text-lg font-display font-bold text-coffee-dark mb-4 flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Povijest cijena po trgovinama
+              </h3>
+              
+              <div className="space-y-6">
+                <AddPriceEntry coffeeId={coffee.id} />
                 
-                <div className="space-y-2">
-                  {coffee.priceHistory.slice().reverse().map((entry, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-center justify-between py-2 border-b border-neutral-200 last:border-0"
-                    >
-                      <span className="text-coffee-roast">{formatDate(entry.date)}</span>
-                      <span className="font-semibold text-coffee-dark">{formatPrice(entry.price)}</span>
-                    </div>
-                  ))}
-                </div>
+                <PriceHistoryTable 
+                  coffeeId={coffee.id} 
+                  priceHistory={coffee.priceHistory || []} 
+                />
               </div>
-            )}
+            </div>
           </motion.div>
         </div>
       </div>
