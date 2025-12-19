@@ -27,7 +27,24 @@ export default function Landing() {
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-16 md:py-24">
+      <section 
+        className="relative overflow-hidden py-16 md:py-24" 
+        style={{ background: 'linear-gradient(135deg, #3C2415 0%, #6F4E37 50%, #D4A574 100%)' }}
+      >
+        {/* Coffee bean pattern */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <Coffee 
+              key={i}
+              className="absolute w-8 h-8 text-white"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                transform: `rotate(${Math.random() * 360}deg)`
+              }}
+            />
+          ))}
+        </div>
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
@@ -49,23 +66,23 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-6">
-                <span className="text-gradient">Pratite cijene kave</span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-6 text-white">
+                Pratite cijene kave
                 <br />
-                <span className="text-coffee-roast">kao profesionalac</span>
+                kao profesionalac
               </h1>
               
-              <p className="text-lg md:text-xl text-coffee-roast mb-8 max-w-2xl mx-auto">
+              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
                 Unesite, uspoređujte i analizirajte cijene vaših omiljenih kava. 
                 Vizualizirajte trendove i nikad više ne propustite dobru ponudu.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/coffees" className="btn-primary flex items-center justify-center gap-2 text-lg px-8 py-4">
+                <Link to="/coffees" className="inline-flex items-center justify-center gap-2 bg-white text-coffee-dark px-8 py-4 rounded-xl font-semibold hover:bg-coffee-cream transition-colors text-lg">
                   <Coffee className="w-5 h-5" />
                   Pregledaj kave
                 </Link>
-                <Link to="/add" className="btn-secondary flex items-center justify-center gap-2 text-lg px-8 py-4">
+                <Link to="/add" className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors text-lg">
                   <Plus className="w-5 h-5" />
                   Dodaj novu
                 </Link>
@@ -282,49 +299,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 md:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="coffee-gradient rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden"
-          >
-            <div className="absolute inset-0 opacity-10">
-              {/* Coffee bean pattern */}
-              {[...Array(20)].map((_, i) => (
-                <Coffee 
-                  key={i}
-                  className="absolute w-8 h-8"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    transform: `rotate(${Math.random() * 360}deg)`
-                  }}
-                />
-              ))}
-            </div>
-            
-            <div className="relative">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                Spremni za praćenje cijena?
-              </h2>
-              <p className="text-white/80 mb-8 max-w-xl mx-auto">
-                Dodajte svoju prvu kavu i počnite pratiti cijene. Jednostavno, brzo i pregledno.
-              </p>
-              <Link 
-                to="/add"
-                className="inline-flex items-center gap-2 bg-white text-coffee-dark px-8 py-4 rounded-xl font-semibold hover:bg-coffee-cream transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Dodaj prvu kavu
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-8 border-t border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -347,7 +321,7 @@ function StatCard({ icon: Icon, value, label, delay }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 + delay }}
-      className="glass-card rounded-2xl p-6 text-center"
+      className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/30"
     >
       <div className="inline-flex items-center justify-center w-12 h-12 bg-coffee-light/30 rounded-xl mb-3">
         <Icon className="w-6 h-6 text-coffee-dark" />

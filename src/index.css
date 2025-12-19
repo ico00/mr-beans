@@ -99,7 +99,7 @@ h1, h2, h3, h4 {
 }
 
 .coffee-gradient {
-  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-roast) 50%, var(--coffee-light) 100%);
+  background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-roast) 50%, var(--coffee-light) 100%) !important;
 }
 
 .text-gradient {
@@ -259,7 +259,7 @@ h1, h2, h3, h4 {
   transition: all 0.2s ease;
   border: 2px solid var(--coffee-dark);
   cursor: pointer;
-}
+  }
 
 .btn-secondary:hover {
   background: var(--coffee-dark);

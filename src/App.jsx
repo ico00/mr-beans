@@ -24,7 +24,7 @@ function App() {
               <Route path="/edit/:id" element={<EditCoffee />} />
             </Routes>
           </main>
-        </div>
+      </div>
       </BrowserRouter>
     </CoffeeProvider>
   );
