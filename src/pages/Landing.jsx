@@ -6,10 +6,10 @@ import CoffeeMap from '../components/CoffeeMap';
 import CoffeeMarketPrices from '../components/CoffeeMarketPrices';
 import { PriceComparisonChart } from '../components/PriceChart';
 import { CoffeeBeanRatingSmall } from '../components/CoffeeBeanRating';
-import { formatPrice, IMAGES_FOLDER } from '../utils/formatters';
+import { formatPrice, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/formatters';
 
 export default function Landing() {
-  const { coffees, stats, loading } = useCoffeeData();
+  const { coffees, stats, brands, loading } = useCoffeeData();
 
   if (loading) {
     return (
@@ -298,6 +298,59 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Brands Section */}
+      <section className="py-12 md:py-20 bg-coffee-cream/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-4">
+              Naši brendovi
+            </h2>
+            <p className="text-coffee-roast max-w-2xl mx-auto">
+              Pratimo cijene kava od vodećih proizvođača kave diljem svijeta.
+            </p>
+          </div>
+          
+          <div className="border-t border-neutral-300 pt-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+              {brands && Array.isArray(brands) && brands.length > 0 ? brands.map((brand, index) => (
+                  <motion.div
+                    key={brand.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    className="flex items-center justify-center"
+                  >
+                    {brand.logo ? (
+                      <img
+                        src={`${LOGOS_FOLDER}${brand.logo}`}
+                        alt={brand.name}
+                        className="h-12 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className={`hidden items-center justify-center h-12 md:h-16 ${brand.logo ? '' : 'flex'}`}
+                      style={{ display: brand.logo ? 'none' : 'flex' }}
+                    >
+                      <span className="text-2xl md:text-3xl font-display font-bold text-coffee-dark opacity-60">
+                        {brand.name}
+                      </span>
+                    </div>
+                  </motion.div>
+                )) : (
+                  <div className="col-span-2 md:col-span-4 text-center text-coffee-roast py-8">
+                    Nema dostupnih brandova
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
 
       {/* Footer */}
       <footer className="py-8 border-t border-neutral-200">

@@ -9,6 +9,7 @@
         "lat": -14.235,
         "lng": -51.9253
       },
+      "svgPosition": { "x": 265.0, "y": 320.3 },
       "coffeeProduction": "Najveći proizvođač kave na svijetu",
       "varieties": [
         "Bourbon",
@@ -25,6 +26,7 @@
         "lat": 9.145,
         "lng": 40.4897
       },
+      "svgPosition": { "x": 426.5, "y": 286.9 },
       "coffeeProduction": "Domovina kave",
       "varieties": [
         "Yirgacheffe",
@@ -41,6 +43,7 @@
         "lat": 4.5709,
         "lng": -74.2973
       },
+      "svgPosition": { "x": 220.6, "y": 292.0 },
       "coffeeProduction": "Treći najveći proizvođač",
       "varieties": [
         "Caturra",
@@ -57,6 +60,7 @@
         "lat": 14.0583,
         "lng": 108.2772
       },
+      "svgPosition": { "x": 548.7, "y": 259.2 },
       "coffeeProduction": "Drugi najveći proizvođač",
       "varieties": [
         "Robusta",
@@ -72,6 +76,7 @@
         "lat": -1.2921,
         "lng": 36.8219
       },
+      "svgPosition": { "x": 422.0, "y": 299.1 },
       "coffeeProduction": "Poznata po AA gradaciji",
       "varieties": [
         "SL28",
@@ -88,6 +93,7 @@
         "lat": 15.7835,
         "lng": -90.2308
       },
+      "svgPosition": { "x": 187.8, "y": 271.4 },
       "coffeeProduction": "Vulkanska kava visoke kvalitete",
       "varieties": [
         "Bourbon",
@@ -104,6 +110,7 @@
         "lat": 9.7489,
         "lng": -83.7534
       },
+      "svgPosition": { "x": 199.4, "y": 280.4 },
       "coffeeProduction": "100% Arabica zakonom",
       "varieties": [
         "Caturra",
@@ -120,6 +127,7 @@
         "lat": -0.7893,
         "lng": 113.9213
       },
+      "svgPosition": { "x": 566.7, "y": 301.0 },
       "coffeeProduction": "Poznat po Kopi Luwak",
       "varieties": [
         "Sumatra Mandheling",
@@ -136,6 +144,7 @@
         "lat": 15.2,
         "lng": -86.2419
       },
+      "svgPosition": { "x": 193.6, "y": 270.2 },
       "coffeeProduction": "Šesti najveći proizvođač kave na svijetu",
       "varieties": [
         "Bourbon",
@@ -153,6 +162,7 @@
         "lat": 20.5937,
         "lng": 78.9629
       },
+      "svgPosition": { "x": 500.4, "y": 254.1 },
       "coffeeProduction": "Sedmi najveći proizvođač, poznata po monsunskoj kavi",
       "varieties": [
         "Monsooned Malabar",

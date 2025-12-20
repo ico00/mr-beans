@@ -3,34 +3,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import { MapPin, X, Coffee } from 'lucide-react';
 
-// Pojednostavljeni SVG putevi za zemlje proizvođače kave
-const countryPaths = {
-  brazil: "M300,280 L340,260 L380,270 L400,300 L390,350 L350,380 L310,370 L280,340 L290,300 Z",
-  colombia: "M240,230 L270,220 L290,240 L285,270 L260,280 L240,260 Z",
-  ethiopia: "M520,220 L550,200 L570,220 L560,250 L530,260 L510,240 Z",
-  kenya: "M540,260 L560,250 L575,270 L565,295 L545,290 L535,270 Z",
-  vietnam: "M680,200 L700,180 L710,200 L705,240 L690,250 L680,230 Z",
-  indonesia: "M680,280 L750,270 L780,290 L760,310 L700,320 L680,300 Z",
-  guatemala: "M190,210 L210,200 L220,215 L210,230 L195,225 Z",
-  costa_rica: "M220,235 L235,230 L245,245 L235,255 L225,250 Z"
+// Pojas uzgoja kave - između Tropika Raka (23.5°N) i Tropika Jarca (23.5°S)
+// U SVG viewBox "0 0 750 500", ekvator je na približno y=250
+// Tropic of Cancer (23.5°N): y ≈ 185
+// Tropic of Capricorn (23.5°S): y ≈ 315
+const COFFEE_BELT = { top: 256, bottom: 343, equator: 301 };
+
+// SVG viewBox dimenzije
+const SVG_VIEWBOX = {
+  width: 750,
+  height: 500
 };
 
-// Pozicije za label
-const countryLabelPositions = {
-  brazil: { x: 340, y: 320 },
-  colombia: { x: 260, y: 250 },
-  ethiopia: { x: 540, y: 230 },
-  kenya: { x: 550, y: 275 },
-  vietnam: { x: 695, y: 215 },
-  indonesia: { x: 720, y: 295 },
-  guatemala: { x: 205, y: 215 },
-  costa_rica: { x: 235, y: 245 }
-};
+// Funkcija za konverziju geografskih koordinata u SVG koordinate
+// Longitude (-180 do 180) -> X (0 do 750)
+// Latitude (90 do -90) -> Y (0 do 500)
+function latLngToSvg(lat, lng) {
+  // Longitude: -180 (zapad) -> 0, 0 (Greenwich) -> 375, 180 (istok) -> 750
+  const x = ((lng + 180) / 360) * SVG_VIEWBOX.width;
+  
+  // Latitude: 90 (sjever) -> 0, 0 (ekvator) -> 250, -90 (jug) -> 500
+  const y = ((90 - lat) / 180) * SVG_VIEWBOX.height;
+  
+  return { x, y };
+}
 
 export default function CoffeeMap() {
   const { countries, coffees } = useCoffeeData();
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [debugMode, setDebugMode] = useState(false);
+  const [clickedPosition, setClickedPosition] = useState(null);
+  
+  // State za prilagodbu pozicija linija
+  const [coffeeBelt, setCoffeeBelt] = useState(COFFEE_BELT);
 
   // Broj kava po državi (podrška za više država po kavi)
   const coffeesByCountry = useMemo(() => {
@@ -69,87 +75,328 @@ export default function CoffeeMap() {
       animate={{ opacity: 1 }}
       className="glass-card rounded-2xl p-6 relative overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
         <h3 className="text-lg font-display font-bold text-coffee-dark">
           Pojas uzgoja kave
         </h3>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-4 text-sm flex-wrap">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded border-2 border-[#C9A227] bg-[#C9A227]/15" />
+            <span className="text-coffee-roast text-xs">Pojas uzgoja kave</span>
+          </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#D4C4A8]" />
-            <span className="text-coffee-roast">Nema kava</span>
+            <span className="text-coffee-roast text-xs">Nema kava</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#3C2415]" />
-            <span className="text-coffee-roast">Više kava</span>
+            <span className="text-coffee-roast text-xs">Više kava</span>
           </div>
+          <button
+            onClick={() => setDebugMode(!debugMode)}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              debugMode 
+                ? 'bg-red-500 text-white' 
+                : 'bg-neutral-200 text-coffee-dark hover:bg-neutral-300'
+            }`}
+            title="Debug mod: klikni na karti za koordinate"
+          >
+            {debugMode ? '✕ Debug' : '🔧 Debug'}
+          </button>
         </div>
       </div>
       
-      {/* Map SVG */}
-      <div className="relative aspect-[2/1] bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl overflow-hidden">
-        {/* Coffee Belt Lines */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 400">
-          {/* Tropic of Cancer */}
-          <line 
-            x1="0" y1="160" x2="800" y2="160" 
-            stroke="#C9A227" strokeWidth="1" strokeDasharray="5,5" opacity="0.5"
+      {/* Debug Info */}
+      {debugMode && (
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-xs space-y-4">
+          <div>
+            <p className="font-semibold text-yellow-800 mb-1">Debug mod aktiviran</p>
+            <p className="text-yellow-700">Klikni na karti gdje bi trebala biti zastavica. Koordinate će se prikazati u konzoli i ovdje.</p>
+            {clickedPosition && (
+              <div className="mt-2 space-y-1">
+                <p className="font-mono text-yellow-900">
+                  Koordinate: x={clickedPosition.x.toFixed(1)}, y={clickedPosition.y.toFixed(1)}
+                </p>
+                <p className="text-yellow-700 text-xs">
+                  Dodaj u countries.json: <code className="bg-yellow-100 px-1 rounded">"svgPosition": {"{"} "x": {clickedPosition.x.toFixed(1)}, "y": {clickedPosition.y.toFixed(1)} {"}"}</code>
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {/* Prilagodba pozicija linija */}
+          <div className="border-t border-yellow-300 pt-3">
+            <p className="font-semibold text-yellow-800 mb-2">Prilagodba pozicija linija:</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-yellow-700 mb-1">Tropik Raka (Y):</label>
+                <input
+                  type="number"
+                  value={coffeeBelt.top}
+                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, top: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
+                  step="1"
+                />
+              </div>
+              <div>
+                <label className="block text-yellow-700 mb-1">Ekvator (Y):</label>
+                <input
+                  type="number"
+                  value={coffeeBelt.equator}
+                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, equator: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
+                  step="1"
+                />
+              </div>
+              <div>
+                <label className="block text-yellow-700 mb-1">Tropik Jarca (Y):</label>
+                <input
+                  type="number"
+                  value={coffeeBelt.bottom}
+                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, bottom: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
+                  step="1"
+                />
+              </div>
+            </div>
+            <p className="mt-2 text-yellow-600 text-xs">
+              Klikni na karti gdje bi trebale biti linije da dobiješ Y koordinate, ili ručno unesi vrijednosti.
+            </p>
+            <div className="mt-2">
+              <p className="text-yellow-700 text-xs mb-1">Kopiraj u CoffeeMap.jsx:</p>
+              <code className="block bg-yellow-100 px-2 py-1 rounded text-yellow-900 text-xs">
+                const COFFEE_BELT = {"{"} top: {coffeeBelt.top}, bottom: {coffeeBelt.bottom}, equator: {coffeeBelt.equator} {"}"};
+              </code>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Map Container */}
+      <div className="relative aspect-[3/2] bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl overflow-hidden">
+        {/* World Map SVG Background */}
+        <div className="absolute inset-0">
+          <img 
+            src="/images/world_map.svg" 
+            alt="World Map" 
+            className="w-full h-full object-cover opacity-90"
           />
+        </div>
+        
+        {/* Coffee Belt Overlay */}
+        <svg 
+          className="absolute inset-0 w-full h-full" 
+          viewBox="0 0 750 500"
+          preserveAspectRatio="xMidYMid meet"
+          onClick={(e) => {
+            if (!debugMode) return;
+            const svg = e.currentTarget;
+            const rect = svg.getBoundingClientRect();
+            const viewBox = { width: 750, height: 500 };
+            
+            // Izračunaj relativnu poziciju unutar SVG elementa
+            const x = ((e.clientX - rect.left) / rect.width) * viewBox.width;
+            const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
+            
+            setClickedPosition({ x, y });
+            console.log(`SVG koordinate za ${viewBox.width}x${viewBox.height}: x=${x.toFixed(1)}, y=${y.toFixed(1)}`);
+            console.log(`Dodaj u countries.json: "svgPosition": { "x": ${x.toFixed(1)}, "y": ${y.toFixed(1)} }`);
+          }}
+        >
+          {/* Coffee Belt Highlight - poluprozirni overlay */}
+          <rect 
+            x="0" 
+            y={coffeeBelt.top} 
+            width="750" 
+            height={coffeeBelt.bottom - coffeeBelt.top} 
+            fill="#C9A227" 
+            opacity="0.15"
+            className="coffee-belt-overlay"
+          />
+          
+          {/* Tropic of Cancer (23.5°N) */}
+          <line 
+            x1="0" 
+            y1={coffeeBelt.top} 
+            x2="750" 
+            y2={coffeeBelt.top} 
+            stroke="#C9A227" 
+            strokeWidth={debugMode ? "3" : "1.5"} 
+            strokeDasharray="8,4" 
+            opacity={debugMode ? "1" : "0.7"}
+            className={debugMode ? "cursor-pointer" : ""}
+            onClick={(e) => {
+              if (!debugMode) return;
+              e.stopPropagation();
+              const svg = e.currentTarget.ownerSVGElement;
+              const rect = svg.getBoundingClientRect();
+              const viewBox = { width: 750, height: 500 };
+              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
+              setCoffeeBelt(prev => ({ ...prev, top: y }));
+              console.log(`Tropik Raka Y: ${y.toFixed(1)}`);
+            }}
+            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
+          />
+          
           {/* Equator */}
           <line 
-            x1="0" y1="200" x2="800" y2="200" 
-            stroke="#C9A227" strokeWidth="2" opacity="0.3"
+            x1="0" 
+            y1={coffeeBelt.equator} 
+            x2="750" 
+            y2={coffeeBelt.equator} 
+            stroke="#8B6914" 
+            strokeWidth={debugMode ? "3" : "2"} 
+            opacity={debugMode ? "1" : "0.5"}
+            className={debugMode ? "cursor-pointer" : ""}
+            onClick={(e) => {
+              if (!debugMode) return;
+              e.stopPropagation();
+              const svg = e.currentTarget.ownerSVGElement;
+              const rect = svg.getBoundingClientRect();
+              const viewBox = { width: 750, height: 500 };
+              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
+              setCoffeeBelt(prev => ({ ...prev, equator: y }));
+              console.log(`Ekvator Y: ${y.toFixed(1)}`);
+            }}
+            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
           />
-          {/* Tropic of Capricorn */}
+          
+          {/* Tropic of Capricorn (23.5°S) */}
           <line 
-            x1="0" y1="240" x2="800" y2="240" 
-            stroke="#C9A227" strokeWidth="1" strokeDasharray="5,5" opacity="0.5"
+            x1="0" 
+            y1={coffeeBelt.bottom} 
+            x2="750" 
+            y2={coffeeBelt.bottom} 
+            stroke="#C9A227" 
+            strokeWidth={debugMode ? "3" : "1.5"} 
+            strokeDasharray="8,4" 
+            opacity={debugMode ? "1" : "0.7"}
+            className={debugMode ? "cursor-pointer" : ""}
+            onClick={(e) => {
+              if (!debugMode) return;
+              e.stopPropagation();
+              const svg = e.currentTarget.ownerSVGElement;
+              const rect = svg.getBoundingClientRect();
+              const viewBox = { width: 750, height: 500 };
+              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
+              setCoffeeBelt(prev => ({ ...prev, bottom: y }));
+              console.log(`Tropik Jarca Y: ${y.toFixed(1)}`);
+            }}
+            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
           />
           
-          {/* Coffee Belt Highlight */}
-          <rect 
-            x="0" y="160" width="800" height="80" 
-            fill="#C9A227" opacity="0.1"
-          />
+          {/* Coffee Belt Label */}
+          <text
+            x="375"
+            y={(coffeeBelt.top + coffeeBelt.bottom) / 2}
+            textAnchor="middle"
+            className="text-sm font-bold fill-[#C9A227] pointer-events-none select-none"
+            style={{ 
+              textShadow: '2px 2px 4px rgba(255,255,255,0.8)',
+              letterSpacing: '0.1em'
+            }}
+          >
+            POJAS UZGOJA KAVE
+          </text>
           
-          {/* Countries */}
-          {Object.entries(countryPaths).map(([countryId, path]) => {
-            const country = countries.find(c => c.id === countryId);
-            const isHovered = hoveredCountry === countryId;
-            const isSelected = selectedCountry === countryId;
-            
-            return (
-              <g key={countryId}>
-                <motion.path
-                  d={path}
-                  fill={getCountryColor(countryId)}
-                  stroke={isHovered || isSelected ? '#C9A227' : '#8B6914'}
-                  strokeWidth={isHovered || isSelected ? 3 : 1}
-                  className="cursor-pointer"
-                  onMouseEnter={() => setHoveredCountry(countryId)}
-                  onMouseLeave={() => setHoveredCountry(null)}
-                  onClick={() => setSelectedCountry(countryId === selectedCountry ? null : countryId)}
-                  whileHover={{ scale: 1.05 }}
-                  animate={{ 
-                    filter: isHovered || isSelected ? 'brightness(1.2)' : 'brightness(1)'
-                  }}
-                  style={{ transformOrigin: 'center' }}
-                />
-                
-                {/* Country Label */}
-                {countryLabelPositions[countryId] && (
-                  <text
-                    x={countryLabelPositions[countryId].x}
-                    y={countryLabelPositions[countryId].y}
+          {/* Tropic Labels */}
+          <text
+            x="20"
+            y={coffeeBelt.top - 5}
+            className="text-xs fill-[#C9A227] pointer-events-none select-none font-semibold"
+            style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
+          >
+            Tropik Raka (23.5°N)
+          </text>
+          <text
+            x="20"
+            y={coffeeBelt.bottom + 15}
+            className="text-xs fill-[#C9A227] pointer-events-none select-none font-semibold"
+            style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
+          >
+            Tropik Jarca (23.5°S)
+          </text>
+          
+          {/* Debug Click Marker */}
+          {debugMode && clickedPosition && (
+            <circle
+              cx={clickedPosition.x}
+              cy={clickedPosition.y}
+              r="10"
+              fill="red"
+              opacity="0.5"
+              stroke="red"
+              strokeWidth="2"
+            />
+          )}
+          
+          {/* Country Markers */}
+          {countries
+            .filter(country => 
+              (country.coordinates && country.coordinates.lat && country.coordinates.lng) || 
+              country.svgPosition
+            )
+            .map((country) => {
+              const countryId = country.id;
+              const count = coffeesByCountry[countryId] || 0;
+              const isHovered = hoveredCountry === countryId;
+              const isSelected = selectedCountry === countryId;
+              const markerSize = count > 0 ? (count <= 1 ? 8 : count <= 3 ? 12 : 16) : 6;
+              const markerColor = getCountryColor(countryId);
+              
+              // Koristi ručne SVG koordinate ako postoje, inače konvertiraj geografske koordinate
+              const position = country.svgPosition 
+                ? { x: country.svgPosition.x, y: country.svgPosition.y }
+                : latLngToSvg(country.coordinates.lat, country.coordinates.lng);
+              
+              return (
+                <g key={countryId} transform={`translate(${position.x}, ${position.y})`}>
+                  {/* Country Flag */}
+                  <motion.text
+                    x="0"
+                    y="0"
                     textAnchor="middle"
-                    className="text-xs font-semibold fill-white pointer-events-none select-none"
-                    style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+                    className="text-2xl cursor-pointer select-none"
+                    onMouseEnter={() => setHoveredCountry(countryId)}
+                    onMouseLeave={() => setHoveredCountry(null)}
+                    onClick={() => setSelectedCountry(countryId === selectedCountry ? null : countryId)}
+                    whileHover={{ 
+                      scale: 1.2,
+                      transition: { duration: 0.15, ease: "easeOut" }
+                    }}
+                    animate={{ 
+                      scale: isSelected ? 1.15 : 1,
+                      transition: { duration: 0.15, ease: "easeOut" }
+                    }}
+                    style={{ 
+                      pointerEvents: 'all',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                      filter: isHovered || isSelected 
+                        ? 'drop-shadow(0 0 4px rgba(201, 162, 39, 0.8)) brightness(1.2)' 
+                        : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                      transformOrigin: 'center center'
+                    }}
                   >
-                    {country?.flag}
-                  </text>
-                )}
-              </g>
-            );
-          })}
+                    {country.flag}
+                  </motion.text>
+                  
+                  {/* Coffee Count Badge */}
+                  {count > 0 && (
+                    <text
+                      x="0"
+                      y="20"
+                      textAnchor="middle"
+                      className="text-xs font-bold fill-white pointer-events-none select-none"
+                      style={{ 
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      {count}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
         </svg>
         
         {/* Hover Tooltip */}
@@ -159,18 +406,25 @@ export default function CoffeeMap() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute bottom-4 left-4 glass-card rounded-xl p-3 shadow-lg"
+              className="absolute bottom-4 left-4 glass-card rounded-xl p-4 shadow-lg max-w-xs z-10"
             >
               {(() => {
                 const country = countries.find(c => c.id === hoveredCountry);
                 const count = coffeesByCountry[hoveredCountry] || 0;
                 return (
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{country?.flag}</span>
-                    <div>
-                      <p className="font-semibold text-coffee-dark">{country?.name}</p>
-                      <p className="text-sm text-coffee-roast">{count} kava</p>
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl">{country?.flag}</span>
+                      <div>
+                        <p className="font-semibold text-coffee-dark">{country?.name}</p>
+                        <p className="text-sm text-coffee-roast">{count} {count === 1 ? 'kava' : count < 5 ? 'kave' : 'kava'}</p>
+                      </div>
                     </div>
+                    {country?.coffeeProduction && (
+                      <p className="text-xs text-coffee-roast mt-2 pt-2 border-t border-neutral-200">
+                        {country.coffeeProduction}
+                      </p>
+                    )}
                   </div>
                 );
               })()}
