@@ -13,6 +13,10 @@ export default function Landing() {
   const { coffees, stats, brands, loading, getStoreById } = useCoffeeData();
   const { isAdmin, openLoginModal } = useAuth();
   
+  // Na localhostu (development) omogući edit bez logiranja
+  const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost';
+  const canEdit = isDevelopment || isAdmin;
+  
   // Sortiraj kave po datumu dodavanja (najnovije prvo)
   const recentCoffees = [...coffees].sort((a, b) => {
     // Prvo pokušaj koristiti createdAt
@@ -103,7 +107,7 @@ export default function Landing() {
                   <Coffee className="w-5 h-5" />
                   Pregledaj kave
                 </Link>
-                {isAdmin ? (
+                {canEdit ? (
                   <Link to="/add" className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors text-lg">
                     <Plus className="w-5 h-5" />
                     Dodaj novu

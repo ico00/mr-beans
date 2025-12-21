@@ -96,8 +96,8 @@
         "indija",
         "brazil"
       ],
-      "storeId": "3",
-      "priceEUR": 23.39,
+      "storeId": "2",
+      "priceEUR": 38.99,
       "weightG": 1000,
       "rating": 3,
       "image": "1766085528385-2552-d-crema_e_aroma-beans-_2.png",
@@ -121,9 +121,86 @@
           "date": "2025-12-18",
           "price": 32.99,
           "storeId": "5"
+        },
+        {
+          "id": "1766317605787",
+          "date": "2025-12-21",
+          "price": 38.99,
+          "storeId": "2"
         }
       ],
       "createdAt": "2025-12-18"
+    },
+    {
+      "brandId": "1",
+      "name": "Espresso Italiano Cremoso",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 70,
+      "countryIds": [
+        "brazil"
+      ],
+      "storeId": "3",
+      "priceEUR": 29.09,
+      "weightG": 1000,
+      "rating": 3,
+      "image": "1766316617910-lavazza-cremoso.png",
+      "robustaPercentage": 30,
+      "id": "1766316620337",
+      "priceHistory": [
+        {
+          "id": "1766316620337",
+          "date": "2025-12-21",
+          "price": 29.09,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2025-12-21"
+    },
+    {
+      "brandId": "2",
+      "name": "Classico",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        null,
+        "mix"
+      ],
+      "storeId": "2",
+      "priceEUR": 8.23,
+      "weightG": 250,
+      "rating": 4,
+      "image": "1766318106019-illy-classico.png",
+      "robustaPercentage": 0,
+      "id": "1766318107589",
+      "priceHistory": [
+        {
+          "id": "1766318107589",
+          "date": "2025-12-21",
+          "price": 8.23,
+          "storeId": "2"
+        },
+        {
+          "id": "1766318265525",
+          "date": "2025-12-21",
+          "price": 8.99,
+          "storeId": "5"
+        },
+        {
+          "id": "1766318297344",
+          "date": "2025-12-21",
+          "price": 7.69,
+          "storeId": "3"
+        },
+        {
+          "id": "1766318340916",
+          "date": "2025-12-21",
+          "price": 7.27,
+          "storeId": "4"
+        }
+      ],
+      "createdAt": "2025-12-21"
     }
   ]
 }

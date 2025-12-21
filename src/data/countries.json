@@ -1,175 +1,84 @@
 {
   "countries": [
     {
-      "id": "brazil",
+      "id": "BR",
       "name": "Brazil",
       "flag": "🇧🇷",
       "region": "Južna Amerika",
-      "coordinates": {
-        "lat": -14.235,
-        "lng": -51.9253
-      },
-      "svgPosition": { "x": 265.0, "y": 320.3 },
       "coffeeProduction": "Najveći proizvođač kave na svijetu",
-      "varieties": [
-        "Bourbon",
-        "Catuai",
-        "Mundo Novo"
-      ]
+      "varieties": ["Bourbon", "Catuai", "Mundo Novo"]
     },
     {
-      "id": "ethiopia",
+      "id": "ET",
       "name": "Etiopija",
       "flag": "🇪🇹",
       "region": "Afrika",
-      "coordinates": {
-        "lat": 9.145,
-        "lng": 40.4897
-      },
-      "svgPosition": { "x": 426.5, "y": 286.9 },
       "coffeeProduction": "Domovina kave",
-      "varieties": [
-        "Yirgacheffe",
-        "Sidamo",
-        "Harrar"
-      ]
+      "varieties": ["Yirgacheffe", "Sidamo", "Harrar"]
     },
     {
-      "id": "colombia",
+      "id": "CO",
       "name": "Kolumbija",
       "flag": "🇨🇴",
       "region": "Južna Amerika",
-      "coordinates": {
-        "lat": 4.5709,
-        "lng": -74.2973
-      },
-      "svgPosition": { "x": 220.6, "y": 292.0 },
       "coffeeProduction": "Treći najveći proizvođač",
-      "varieties": [
-        "Caturra",
-        "Castillo",
-        "Typica"
-      ]
+      "varieties": ["Caturra", "Castillo", "Typica"]
     },
     {
-      "id": "vietnam",
+      "id": "VN",
       "name": "Vijetnam",
       "flag": "🇻🇳",
       "region": "Azija",
-      "coordinates": {
-        "lat": 14.0583,
-        "lng": 108.2772
-      },
-      "svgPosition": { "x": 548.7, "y": 259.2 },
       "coffeeProduction": "Drugi najveći proizvođač",
-      "varieties": [
-        "Robusta",
-        "Catimor"
-      ]
+      "varieties": ["Robusta", "Catimor"]
     },
     {
-      "id": "kenya",
+      "id": "KE",
       "name": "Kenija",
       "flag": "🇰🇪",
       "region": "Afrika",
-      "coordinates": {
-        "lat": -1.2921,
-        "lng": 36.8219
-      },
-      "svgPosition": { "x": 422.0, "y": 299.1 },
       "coffeeProduction": "Poznata po AA gradaciji",
-      "varieties": [
-        "SL28",
-        "SL34",
-        "Ruiru 11"
-      ]
+      "varieties": ["SL28", "SL34", "Ruiru 11"]
     },
     {
-      "id": "guatemala",
+      "id": "GT",
       "name": "Gvatemala",
       "flag": "🇬🇹",
       "region": "Srednja Amerika",
-      "coordinates": {
-        "lat": 15.7835,
-        "lng": -90.2308
-      },
-      "svgPosition": { "x": 187.8, "y": 271.4 },
       "coffeeProduction": "Vulkanska kava visoke kvalitete",
-      "varieties": [
-        "Bourbon",
-        "Caturra",
-        "Typica"
-      ]
+      "varieties": ["Bourbon", "Caturra", "Typica"]
     },
     {
-      "id": "costa_rica",
+      "id": "CR",
       "name": "Kostarika",
       "flag": "🇨🇷",
       "region": "Srednja Amerika",
-      "coordinates": {
-        "lat": 9.7489,
-        "lng": -83.7534
-      },
-      "svgPosition": { "x": 199.4, "y": 280.4 },
       "coffeeProduction": "100% Arabica zakonom",
-      "varieties": [
-        "Caturra",
-        "Catuai",
-        "Geisha"
-      ]
+      "varieties": ["Caturra", "Catuai", "Geisha"]
     },
     {
-      "id": "indonesia",
+      "id": "ID",
       "name": "Indonezija",
       "flag": "🇮🇩",
       "region": "Azija",
-      "coordinates": {
-        "lat": -0.7893,
-        "lng": 113.9213
-      },
-      "svgPosition": { "x": 566.7, "y": 301.0 },
       "coffeeProduction": "Poznat po Kopi Luwak",
-      "varieties": [
-        "Sumatra Mandheling",
-        "Java",
-        "Sulawesi"
-      ]
+      "varieties": ["Sumatra Mandheling", "Java", "Sulawesi"]
     },
     {
-      "id": "honduras",
+      "id": "HN",
       "name": "Honduras",
       "flag": "🇭🇳",
       "region": "Srednja Amerika",
-      "coordinates": {
-        "lat": 15.2,
-        "lng": -86.2419
-      },
-      "svgPosition": { "x": 193.6, "y": 270.2 },
       "coffeeProduction": "Šesti najveći proizvođač kave na svijetu",
-      "varieties": [
-        "Bourbon",
-        "Catuai",
-        "Pacas",
-        "Lempira"
-      ]
+      "varieties": ["Bourbon", "Catuai", "Pacas", "Lempira"]
     },
     {
-      "id": "indija",
+      "id": "IN",
       "name": "Indija",
       "flag": "🇮🇳",
       "region": "Azija",
-      "coordinates": {
-        "lat": 20.5937,
-        "lng": 78.9629
-      },
-      "svgPosition": { "x": 500.4, "y": 254.1 },
       "coffeeProduction": "Sedmi najveći proizvođač, poznata po monsunskoj kavi",
-      "varieties": [
-        "Monsooned Malabar",
-        "Mysore",
-        "Kent",
-        "S795"
-      ]
+      "varieties": ["Monsooned Malabar", "Mysore", "Kent", "S795"]
     }
   ]
 }
