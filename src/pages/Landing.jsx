@@ -6,10 +6,29 @@ import CoffeeMap from '../components/CoffeeMap';
 import CoffeeMarketPrices from '../components/CoffeeMarketPrices';
 import { PriceComparisonChart } from '../components/PriceChart';
 import { CoffeeBeanRatingSmall } from '../components/CoffeeBeanRating';
-import { formatPrice, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/formatters';
+import { formatPrice, formatDate, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/formatters';
 
 export default function Landing() {
-  const { coffees, stats, brands, loading } = useCoffeeData();
+  const { coffees, stats, brands, loading, getStoreById } = useCoffeeData();
+  
+  // Sortiraj kave po datumu dodavanja (najnovije prvo)
+  const recentCoffees = [...coffees].sort((a, b) => {
+    // Prvo pokušaj koristiti createdAt
+    if (a.createdAt && b.createdAt) {
+      const dateDiff = new Date(b.createdAt) - new Date(a.createdAt);
+      // Ako su datumi isti, koristi id (timestamp) za sortiranje
+      if (dateDiff === 0) {
+        const aId = parseInt(a.id) || 0;
+        const bId = parseInt(b.id) || 0;
+        return bId - aId;
+      }
+      return dateDiff;
+    }
+    // Ako nema createdAt, koristi id (timestamp) za sortiranje
+    const aId = parseInt(a.id) || 0;
+    const bId = parseInt(b.id) || 0;
+    return bId - aId;
+  }).slice(0, 3);
 
   if (loading) {
     return (
@@ -238,7 +257,18 @@ export default function Landing() {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {coffees.slice(0, 3).map((coffee, index) => (
+            {recentCoffees.length > 0 ? (
+              recentCoffees.map((coffee, index) => {
+                // Pronađi najnižu cijenu iz priceHistory
+                const lowestPriceEntry = coffee.priceHistory && coffee.priceHistory.length > 0
+                  ? coffee.priceHistory.reduce((lowest, entry) => 
+                      entry.price < lowest.price ? entry : lowest
+                    )
+                  : null;
+                const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
+                const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
+                
+                return (
               <motion.div
                 key={coffee.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -249,12 +279,12 @@ export default function Landing() {
                 <Link to={`/coffee/${coffee.id}`}>
                   <div className="coffee-card glass-card rounded-2xl p-6 h-full">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-coffee-light/30 to-coffee-cream rounded-xl flex items-center justify-center overflow-hidden">
+                      <div className="w-24 flex items-center justify-center overflow-hidden">
                         {coffee.image ? (
                           <img 
                             src={coffee.image.startsWith('http') ? coffee.image : `${IMAGES_FOLDER}${coffee.image}`}
                             alt={coffee.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-auto object-contain"
                           />
                         ) : (
                           <Coffee className="w-8 h-8 text-coffee-dark" />
@@ -275,16 +305,34 @@ export default function Landing() {
                       <span className="text-sm text-coffee-roast">{coffee.country?.name}</span>
                     </div>
                     
+                    {/* Težina i dućan s najnižom cijenom */}
+                    <div className="flex items-center gap-4 mb-4 text-sm text-coffee-roast">
+                      {coffee.weightG && (
+                        <span>{coffee.weightG >= 1000 ? `${(coffee.weightG / 1000).toFixed(coffee.weightG % 1000 === 0 ? 0 : 1)}kg` : `${coffee.weightG}g`}</span>
+                      )}
+                      {lowestPriceStore && lowestPriceEntry && (
+                        <span className="font-semibold text-coffee-dark">
+                          {lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})
+                        </span>
+                      )}
+                    </div>
+                    
                     <div className="flex items-center justify-between pt-4 border-t border-neutral-200">
                       <span className="text-2xl font-bold text-coffee-dark">
-                        {formatPrice(coffee.priceEUR)}
+                        {formatPrice(displayPrice)}
                       </span>
                       <CoffeeBeanRatingSmall rating={coffee.rating} />
                     </div>
                   </div>
                 </Link>
               </motion.div>
-            ))}
+              );
+              })
+            ) : (
+              <div className="col-span-full text-center py-12 text-coffee-roast">
+                <p>Nema dodanih kava.</p>
+              </div>
+            )}
           </div>
           
           <div className="mt-8 text-center sm:hidden">

@@ -1,13 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCoffeeData } from '../hooks/useCoffeeData';
-import { MapPin, X, Coffee } from 'lucide-react';
+import { MapPin, X, Coffee, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import svgPanZoom from 'svg-pan-zoom';
 
-// Pojas uzgoja kave - između Tropika Raka (23.5°N) i Tropika Jarca (23.5°S)
-// U SVG viewBox "0 0 750 500", ekvator je na približno y=250
-// Tropic of Cancer (23.5°N): y ≈ 185
-// Tropic of Capricorn (23.5°S): y ≈ 315
-const COFFEE_BELT = { top: 256, bottom: 343, equator: 301 };
 
 // SVG viewBox dimenzije
 const SVG_VIEWBOX = {
@@ -33,10 +29,246 @@ export default function CoffeeMap() {
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [debugMode, setDebugMode] = useState(false);
+  const debugModeRef = useRef(false); // Ref za pristup debugMode u callback-ovima
   const [clickedPosition, setClickedPosition] = useState(null);
+  const [svgContent, setSvgContent] = useState(null);
+  const svgRef = useRef(null);
+  const panZoomRef = useRef(null);
+  const markersContainerRef = useRef(null);
+  const isInitializedRef = useRef(false);
   
-  // State za prilagodbu pozicija linija
-  const [coffeeBelt, setCoffeeBelt] = useState(COFFEE_BELT);
+  // Ažuriraj ref kada se debugMode promijeni
+  useEffect(() => {
+    debugModeRef.current = debugMode;
+  }, [debugMode]);
+  
+
+  // Učitaj SVG datoteku i inicijaliziraj svg-pan-zoom
+  useEffect(() => {
+    if (!svgRef.current) return;
+
+    let mounted = true;
+
+    // Učitaj SVG datoteku
+    fetch('/images/world_map.svg')
+      .then(response => response.text())
+      .then(svg => {
+        if (!mounted || !svgRef.current) return;
+
+        // Parsiraj SVG i izvuci sadržaj
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, 'image/svg+xml');
+        const sourceSvgElement = doc.querySelector('svg');
+        
+        if (sourceSvgElement && svgRef.current) {
+          // Pronađi ili kreiraj background group
+          let bgGroup = svgRef.current.querySelector('#world-map-background');
+          if (!bgGroup) {
+            bgGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            bgGroup.id = 'world-map-background';
+            bgGroup.setAttribute('style', 'opacity: 0.9');
+            // Ubaci na početak SVG-a
+            svgRef.current.insertBefore(bgGroup, svgRef.current.firstChild);
+          }
+          
+          // Dodaj SVG sadržaj u background group
+          bgGroup.innerHTML = sourceSvgElement.innerHTML;
+          setSvgContent(true); // Signal da je SVG učitan
+
+          // Pronađi ili kreiraj markers container
+          let markersContainer = svgRef.current.querySelector('#markers-container');
+          if (!markersContainer) {
+            markersContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            markersContainer.id = 'markers-container';
+            svgRef.current.appendChild(markersContainer);
+          }
+          markersContainerRef.current = markersContainer;
+
+          // Inicijaliziraj svg-pan-zoom nakon kratkog delay-a (samo jednom)
+          if (!isInitializedRef.current) {
+            setTimeout(() => {
+              if (!mounted || !svgRef.current || panZoomRef.current) return;
+              
+              try {
+                panZoomRef.current = svgPanZoom(svgRef.current, {
+                  zoomEnabled: true,
+                  controlIconsEnabled: false,
+                  fit: true,
+                  center: true,
+                  minZoom: 1.0,
+                  maxZoom: 5,
+                  panEnabled: true, // Omogućen, ali kontroliramo kroz beforePan
+                  dblClickZoomEnabled: true,
+                  mouseWheelZoomEnabled: true,
+                  preventMouseEventsDefault: false,
+                  zoomScaleSensitivity: 0.2,
+                  beforePan: function(oldPoint, newPoint) {
+                    const instance = panZoomRef.current;
+                    if (!instance || !svgRef.current) return newPoint;
+                    
+                    try {
+                      // Ne dozvoli pan u debug modu
+                      if (debugModeRef.current) {
+                        return oldPoint; // Ne dozvoli pan u debug modu
+                      }
+                      
+                      const zoom = instance.getZoom();
+                      
+                      // Ne dozvoli pan kada je zoom <= 1.0
+                      if (zoom <= 1.0) {
+                        return oldPoint; // Vrati staru poziciju - ne dozvoli pan
+                      }
+                      
+                      // Ručno ograniči pan unutar granica
+                      let sizes;
+                      try {
+                        sizes = instance.getSizes();
+                      } catch (e) {
+                        sizes = null;
+                      }
+                      
+                      if (sizes) {
+                        // Prema dokumentaciji svg-pan-zoom
+                        const leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom - sizes.width);
+                        const rightLimit = 0;
+                        const topLimit = -((sizes.viewBox.y + sizes.viewBox.height) * sizes.realZoom - sizes.height);
+                        const bottomLimit = 0;
+                        
+                        // Ograniči newPoint unutar granica
+                        return {
+                          x: Math.max(leftLimit, Math.min(rightLimit, newPoint.x)),
+                          y: Math.max(topLimit, Math.min(bottomLimit, newPoint.y))
+                        };
+                      }
+                      
+                      return newPoint;
+                    } catch (e) {
+                      console.warn('Error in beforePan:', e);
+                      return newPoint;
+                    }
+                  }
+                });
+                
+                // Postavi event listenere na markere nakon što je svg-pan-zoom inicijaliziran
+                setTimeout(() => {
+                  if (!mounted || !svgRef.current) return;
+                  
+                  // Pronađi sve marker elemente i dodaj event listenere
+                  const markers = svgRef.current.querySelectorAll('[data-country-marker]');
+                  markers.forEach(marker => {
+                    const countryId = marker.getAttribute('data-country-marker');
+                    
+                    marker.addEventListener('mouseenter', (e) => {
+                      e.stopPropagation();
+                      setHoveredCountry(countryId);
+                    });
+                    
+                    marker.addEventListener('mouseleave', (e) => {
+                      e.stopPropagation();
+                      setHoveredCountry(null);
+                    });
+                    
+                    marker.addEventListener('click', (e) => {
+                      e.stopPropagation();
+                      setSelectedCountry(prev => prev === countryId ? null : countryId);
+                    });
+                  });
+                }, 300);
+                
+                isInitializedRef.current = true;
+              } catch (error) {
+                console.error('Error initializing svg-pan-zoom:', error);
+              }
+            }, 200);
+          }
+        }
+      })
+      .catch(err => console.error('Error loading SVG:', err));
+
+    // Cleanup - samo kada se komponenta unmount-a
+    return () => {
+      mounted = false;
+      isInitializedRef.current = false;
+      if (panZoomRef.current) {
+        try {
+          panZoomRef.current.destroy();
+          panZoomRef.current = null;
+        } catch (error) {
+          console.error('Error destroying svg-pan-zoom:', error);
+        }
+      }
+    };
+  }, []); // Prazan dependency array - samo jednom se izvršava
+
+  // Ažuriraj panEnabled ovisno o debug mode-u
+  useEffect(() => {
+    if (!panZoomRef.current) return;
+    
+    try {
+      // Onemogući pan i zoom u debug modu
+      if (typeof panZoomRef.current.setEnablePan === 'function') {
+        panZoomRef.current.setEnablePan(!debugMode);
+      }
+      if (typeof panZoomRef.current.setZoomEnabled === 'function') {
+        panZoomRef.current.setZoomEnabled(!debugMode);
+      }
+      if (panZoomRef.current.config) {
+        panZoomRef.current.config.panEnabled = !debugMode;
+        panZoomRef.current.config.zoomEnabled = !debugMode;
+      }
+    } catch (e) {
+      console.warn('Error updating pan/zoom enabled:', e);
+    }
+  }, [debugMode]);
+
+  // Postavi event listenere na markere nakon render-a i inicijalizacije pan-zoom-a
+  useEffect(() => {
+    if (!svgRef.current || !isInitializedRef.current) return;
+    
+    // Kratak delay da se osiguram da su elementi render-ani
+    const timer = setTimeout(() => {
+      const markers = svgRef.current?.querySelectorAll('[data-country-marker]');
+      if (!markers) return;
+      
+      const handleMouseEnter = (e) => {
+        e.stopPropagation();
+        const countryId = e.currentTarget.getAttribute('data-country-marker');
+        if (countryId) {
+          setHoveredCountry(countryId);
+        }
+      };
+      
+      const handleMouseLeave = (e) => {
+        e.stopPropagation();
+        setHoveredCountry(null);
+      };
+      
+      const handleClick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const countryId = e.currentTarget.getAttribute('data-country-marker');
+        if (countryId) {
+          setSelectedCountry(prev => prev === countryId ? null : countryId);
+        }
+      };
+      
+      markers.forEach(marker => {
+        marker.addEventListener('mouseenter', handleMouseEnter, true); // useCapture = true
+        marker.addEventListener('mouseleave', handleMouseLeave, true);
+        marker.addEventListener('click', handleClick, true);
+      });
+      
+      return () => {
+        markers.forEach(marker => {
+          marker.removeEventListener('mouseenter', handleMouseEnter, true);
+          marker.removeEventListener('mouseleave', handleMouseLeave, true);
+          marker.removeEventListener('click', handleClick, true);
+        });
+      };
+    }, 400);
+    
+    return () => clearTimeout(timer);
+  }, [countries.length, svgContent]); // Re-run kada se države promijene ili SVG učita
 
   // Broj kava po državi (podrška za više država po kavi)
   const coffeesByCountry = useMemo(() => {
@@ -124,72 +356,67 @@ export default function CoffeeMap() {
             )}
           </div>
           
-          {/* Prilagodba pozicija linija */}
-          <div className="border-t border-yellow-300 pt-3">
-            <p className="font-semibold text-yellow-800 mb-2">Prilagodba pozicija linija:</p>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block text-yellow-700 mb-1">Tropik Raka (Y):</label>
-                <input
-                  type="number"
-                  value={coffeeBelt.top}
-                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, top: Number(e.target.value) }))}
-                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
-                  step="1"
-                />
-              </div>
-              <div>
-                <label className="block text-yellow-700 mb-1">Ekvator (Y):</label>
-                <input
-                  type="number"
-                  value={coffeeBelt.equator}
-                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, equator: Number(e.target.value) }))}
-                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
-                  step="1"
-                />
-              </div>
-              <div>
-                <label className="block text-yellow-700 mb-1">Tropik Jarca (Y):</label>
-                <input
-                  type="number"
-                  value={coffeeBelt.bottom}
-                  onChange={(e) => setCoffeeBelt(prev => ({ ...prev, bottom: Number(e.target.value) }))}
-                  className="w-full px-2 py-1 border border-yellow-300 rounded text-yellow-900"
-                  step="1"
-                />
-              </div>
-            </div>
-            <p className="mt-2 text-yellow-600 text-xs">
-              Klikni na karti gdje bi trebale biti linije da dobiješ Y koordinate, ili ručno unesi vrijednosti.
-            </p>
-            <div className="mt-2">
-              <p className="text-yellow-700 text-xs mb-1">Kopiraj u CoffeeMap.jsx:</p>
-              <code className="block bg-yellow-100 px-2 py-1 rounded text-yellow-900 text-xs">
-                const COFFEE_BELT = {"{"} top: {coffeeBelt.top}, bottom: {coffeeBelt.bottom}, equator: {coffeeBelt.equator} {"}"};
-              </code>
-            </div>
-          </div>
         </div>
       )}
       
       {/* Map Container */}
       <div className="relative aspect-[3/2] bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl overflow-hidden">
-        {/* World Map SVG Background */}
-        <div className="absolute inset-0">
-          <img 
-            src="/images/world_map.svg" 
-            alt="World Map" 
-            className="w-full h-full object-cover opacity-90"
-          />
+        {/* Zoom Controls */}
+        <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+          <button
+            onClick={() => {
+              if (panZoomRef.current) {
+                panZoomRef.current.zoomIn();
+              }
+            }}
+            className="glass-card p-2 rounded-lg hover:bg-white/80 transition-colors shadow-lg"
+            title="Zoom In"
+          >
+            <ZoomIn className="w-5 h-5 text-coffee-dark" />
+          </button>
+          <button
+            onClick={() => {
+              if (panZoomRef.current) {
+                panZoomRef.current.zoomOut();
+              }
+            }}
+            className="glass-card p-2 rounded-lg hover:bg-white/80 transition-colors shadow-lg"
+            title="Zoom Out"
+          >
+            <ZoomOut className="w-5 h-5 text-coffee-dark" />
+          </button>
+          <button
+            onClick={() => {
+              if (panZoomRef.current) {
+                panZoomRef.current.resetZoom();
+                panZoomRef.current.center();
+                panZoomRef.current.fit();
+              }
+            }}
+            className="glass-card p-2 rounded-lg hover:bg-white/80 transition-colors shadow-lg"
+            title="Reset"
+          >
+            <RotateCcw className="w-5 h-5 text-coffee-dark" />
+          </button>
         </div>
-        
-        {/* Coffee Belt Overlay */}
+        {/* Interactive SVG Map - key ensures React never replaces this element */}
         <svg 
-          className="absolute inset-0 w-full h-full" 
+          key="world-map-svg"
+          ref={svgRef}
+          id="world-map"
+          className="w-full h-full" 
           viewBox="0 0 750 500"
           preserveAspectRatio="xMidYMid meet"
           onClick={(e) => {
             if (!debugMode) return;
+            // Ignoriraj ako je klik na marker
+            if (e.target.closest('[data-country-marker]')) {
+              e.stopPropagation();
+              return;
+            }
+            
+            e.stopPropagation();
+            e.preventDefault();
             const svg = e.currentTarget;
             const rect = svg.getBoundingClientRect();
             const viewBox = { width: 750, height: 500 };
@@ -202,121 +429,21 @@ export default function CoffeeMap() {
             console.log(`SVG koordinate za ${viewBox.width}x${viewBox.height}: x=${x.toFixed(1)}, y=${y.toFixed(1)}`);
             console.log(`Dodaj u countries.json: "svgPosition": { "x": ${x.toFixed(1)}, "y": ${y.toFixed(1)} }`);
           }}
+          onMouseDown={(e) => {
+            // Za debug mode, spriječi pan
+            if (debugMode) {
+              e.stopPropagation();
+              e.preventDefault();
+            }
+          }}
+          onMouseMove={(e) => {
+            // Za debug mode, spriječi pan
+            if (debugMode) {
+              e.stopPropagation();
+            }
+          }}
         >
-          {/* Coffee Belt Highlight - poluprozirni overlay */}
-          <rect 
-            x="0" 
-            y={coffeeBelt.top} 
-            width="750" 
-            height={coffeeBelt.bottom - coffeeBelt.top} 
-            fill="#C9A227" 
-            opacity="0.15"
-            className="coffee-belt-overlay"
-          />
-          
-          {/* Tropic of Cancer (23.5°N) */}
-          <line 
-            x1="0" 
-            y1={coffeeBelt.top} 
-            x2="750" 
-            y2={coffeeBelt.top} 
-            stroke="#C9A227" 
-            strokeWidth={debugMode ? "3" : "1.5"} 
-            strokeDasharray="8,4" 
-            opacity={debugMode ? "1" : "0.7"}
-            className={debugMode ? "cursor-pointer" : ""}
-            onClick={(e) => {
-              if (!debugMode) return;
-              e.stopPropagation();
-              const svg = e.currentTarget.ownerSVGElement;
-              const rect = svg.getBoundingClientRect();
-              const viewBox = { width: 750, height: 500 };
-              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
-              setCoffeeBelt(prev => ({ ...prev, top: y }));
-              console.log(`Tropik Raka Y: ${y.toFixed(1)}`);
-            }}
-            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
-          />
-          
-          {/* Equator */}
-          <line 
-            x1="0" 
-            y1={coffeeBelt.equator} 
-            x2="750" 
-            y2={coffeeBelt.equator} 
-            stroke="#8B6914" 
-            strokeWidth={debugMode ? "3" : "2"} 
-            opacity={debugMode ? "1" : "0.5"}
-            className={debugMode ? "cursor-pointer" : ""}
-            onClick={(e) => {
-              if (!debugMode) return;
-              e.stopPropagation();
-              const svg = e.currentTarget.ownerSVGElement;
-              const rect = svg.getBoundingClientRect();
-              const viewBox = { width: 750, height: 500 };
-              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
-              setCoffeeBelt(prev => ({ ...prev, equator: y }));
-              console.log(`Ekvator Y: ${y.toFixed(1)}`);
-            }}
-            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
-          />
-          
-          {/* Tropic of Capricorn (23.5°S) */}
-          <line 
-            x1="0" 
-            y1={coffeeBelt.bottom} 
-            x2="750" 
-            y2={coffeeBelt.bottom} 
-            stroke="#C9A227" 
-            strokeWidth={debugMode ? "3" : "1.5"} 
-            strokeDasharray="8,4" 
-            opacity={debugMode ? "1" : "0.7"}
-            className={debugMode ? "cursor-pointer" : ""}
-            onClick={(e) => {
-              if (!debugMode) return;
-              e.stopPropagation();
-              const svg = e.currentTarget.ownerSVGElement;
-              const rect = svg.getBoundingClientRect();
-              const viewBox = { width: 750, height: 500 };
-              const y = ((e.clientY - rect.top) / rect.height) * viewBox.height;
-              setCoffeeBelt(prev => ({ ...prev, bottom: y }));
-              console.log(`Tropik Jarca Y: ${y.toFixed(1)}`);
-            }}
-            style={{ pointerEvents: debugMode ? 'all' : 'none' }}
-          />
-          
-          {/* Coffee Belt Label */}
-          <text
-            x="375"
-            y={(coffeeBelt.top + coffeeBelt.bottom) / 2}
-            textAnchor="middle"
-            className="text-sm font-bold fill-[#C9A227] pointer-events-none select-none"
-            style={{ 
-              textShadow: '2px 2px 4px rgba(255,255,255,0.8)',
-              letterSpacing: '0.1em'
-            }}
-          >
-            POJAS UZGOJA KAVE
-          </text>
-          
-          {/* Tropic Labels */}
-          <text
-            x="20"
-            y={coffeeBelt.top - 5}
-            className="text-xs fill-[#C9A227] pointer-events-none select-none font-semibold"
-            style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
-          >
-            Tropik Raka (23.5°N)
-          </text>
-          <text
-            x="20"
-            y={coffeeBelt.bottom + 15}
-            className="text-xs fill-[#C9A227] pointer-events-none select-none font-semibold"
-            style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
-          >
-            Tropik Jarca (23.5°S)
-          </text>
-          
+          {/* World Map Background - loaded via useEffect */}
           {/* Debug Click Marker */}
           {debugMode && clickedPosition && (
             <circle
@@ -331,7 +458,8 @@ export default function CoffeeMap() {
           )}
           
           {/* Country Markers */}
-          {countries
+          <g id="markers-container">
+            {countries
             .filter(country => 
               (country.coordinates && country.coordinates.lat && country.coordinates.lng) || 
               country.svgPosition
@@ -349,36 +477,49 @@ export default function CoffeeMap() {
                 ? { x: country.svgPosition.x, y: country.svgPosition.y }
                 : latLngToSvg(country.coordinates.lat, country.coordinates.lng);
               
+              const scale = isHovered ? 1.2 : isSelected ? 1.1 : 1.0;
+              
               return (
-                <g key={countryId} transform={`translate(${position.x}, ${position.y})`}>
-                  {/* Country Flag */}
-                  <motion.text
+                <g 
+                  key={countryId} 
+                  data-country-marker={countryId}
+                  transform={`translate(${position.x}, ${position.y})`}
+                  style={{ 
+                    pointerEvents: 'all', 
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.stopPropagation();
+                    setHoveredCountry(countryId);
+                  }}
+                  onMouseLeave={(e) => {
+                    e.stopPropagation();
+                    setHoveredCountry(null);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCountry(countryId === selectedCountry ? null : countryId);
+                  }}
+                >
+                  {/* Country Flag - animacija kroz fontSize promjenu */}
+                  <text
                     x="0"
                     y="0"
                     textAnchor="middle"
-                    className="text-2xl cursor-pointer select-none"
-                    onMouseEnter={() => setHoveredCountry(countryId)}
-                    onMouseLeave={() => setHoveredCountry(null)}
-                    onClick={() => setSelectedCountry(countryId === selectedCountry ? null : countryId)}
-                    whileHover={{ 
-                      scale: 1.2,
-                      transition: { duration: 0.15, ease: "easeOut" }
-                    }}
-                    animate={{ 
-                      scale: isSelected ? 1.15 : 1,
-                      transition: { duration: 0.15, ease: "easeOut" }
-                    }}
+                    fontSize={isHovered ? "24" : isSelected ? "22" : "20"}
+                    className="cursor-pointer select-none flag-text"
                     style={{ 
-                      pointerEvents: 'all',
+                      pointerEvents: 'none',
                       textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                       filter: isHovered || isSelected 
-                        ? 'drop-shadow(0 0 4px rgba(201, 162, 39, 0.8)) brightness(1.2)' 
+                        ? 'drop-shadow(0 0 6px rgba(201, 162, 39, 0.9)) brightness(1.3)' 
                         : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
-                      transformOrigin: 'center center'
+                      opacity: isHovered || isSelected ? 1 : 0.9,
+                      transition: 'font-size 0.15s ease-out, filter 0.15s ease-out, opacity 0.15s ease-out'
                     }}
                   >
                     {country.flag}
-                  </motion.text>
+                  </text>
                   
                   {/* Coffee Count Badge */}
                   {count > 0 && (
@@ -397,6 +538,7 @@ export default function CoffeeMap() {
                 </g>
               );
             })}
+          </g>
         </svg>
         
         {/* Hover Tooltip */}

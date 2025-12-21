@@ -7,7 +7,7 @@ import CoffeeFilters from '../components/CoffeeFilters';
 import { filterCoffees } from '../utils/formatters';
 
 export default function CoffeeList() {
-  const { coffees, loading } = useCoffeeData();
+  const { coffees, loading, getStoreById } = useCoffeeData();
   const [viewMode, setViewMode] = useState('grid');
   const [filters, setFilters] = useState({
     search: '',
@@ -123,7 +123,7 @@ export default function CoffeeList() {
             className="space-y-4"
           >
             {filteredCoffees.map((coffee, index) => (
-              <CoffeeListItem key={coffee.id} coffee={coffee} index={index} />
+              <CoffeeListItem key={coffee.id} coffee={coffee} index={index} getStoreById={getStoreById} />
             ))}
           </motion.div>
         )}
@@ -134,10 +134,20 @@ export default function CoffeeList() {
 
 // List item component for list view
 import { Link } from 'react-router-dom';
-import { formatPrice, roastLevels, IMAGES_FOLDER } from '../utils/formatters';
+import { formatPrice, formatDate, roastLevels, IMAGES_FOLDER } from '../utils/formatters';
 import CoffeeBeanRating from '../components/CoffeeBeanRating';
 
 function CoffeeListItem({ coffee, index }) {
+  const { getStoreById } = useCoffeeData();
+  
+  // Pronađi najnižu cijenu iz priceHistory
+  const lowestPriceEntry = coffee.priceHistory && coffee.priceHistory.length > 0
+    ? coffee.priceHistory.reduce((lowest, entry) => 
+        entry.price < lowest.price ? entry : lowest
+      )
+    : null;
+  const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
+  const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -169,7 +179,7 @@ function CoffeeListItem({ coffee, index }) {
                 </h3>
               </div>
               <span className="text-xl font-bold text-coffee-dark whitespace-nowrap">
-                {formatPrice(coffee.priceEUR)}
+                {formatPrice(displayPrice)}
               </span>
             </div>
             
@@ -191,7 +201,11 @@ function CoffeeListItem({ coffee, index }) {
                     : ''}
               </span>
               <span className="text-sm text-coffee-roast">
-                @ {coffee.store?.name}
+                @ {lowestPriceStore && lowestPriceEntry ? (
+                  <span>{lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})</span>
+                ) : (
+                  <span>{coffee.store?.name}</span>
+                )}
               </span>
             </div>
             

@@ -263,17 +263,23 @@ export function CoffeeProvider({ children }) {
   };
 
   // Obogati kavu s povezanim podacima
-  const getEnrichedCoffee = (coffee) => ({
-    ...coffee,
-    brand: getBrandById(coffee.brandId),
-    store: getStoreById(coffee.storeId),
-    // Podrška za stari format (countryId) i novi (countryIds)
-    countries: getCountriesByIds(coffee.countryIds || (coffee.countryId ? [coffee.countryId] : [])),
-    // Zadržavamo i country za kompatibilnost (prva država)
-    country: coffee.countryIds?.length > 0 
-      ? getCountryById(coffee.countryIds[0]) 
-      : getCountryById(coffee.countryId)
-  });
+  const getEnrichedCoffee = (coffee) => {
+    // Filtriraj null vrijednosti iz countryIds
+    const validCountryIds = (coffee.countryIds || (coffee.countryId ? [coffee.countryId] : []))
+      .filter(id => id !== null && id !== undefined);
+    
+    return {
+      ...coffee,
+      brand: getBrandById(coffee.brandId),
+      store: getStoreById(coffee.storeId),
+      // Podrška za stari format (countryId) i novi (countryIds)
+      countries: getCountriesByIds(validCountryIds),
+      // Zadržavamo i country za kompatibilnost (prva valjana država)
+      country: validCountryIds.length > 0 
+        ? getCountryById(validCountryIds[0]) 
+        : getCountryById(coffee.countryId)
+    };
+  };
 
   const enrichedCoffees = coffees.map(getEnrichedCoffee);
 

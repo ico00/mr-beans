@@ -2,9 +2,21 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Store, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import CoffeeBeanRating from './CoffeeBeanRating';
-import { formatPrice, formatWeight, formatPricePerKg, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { formatPrice, formatWeight, formatPricePerKg, formatDate, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { useCoffeeData } from '../hooks/useCoffeeData';
 
 export default function CoffeeCard({ coffee, index = 0 }) {
+  const { getStoreById } = useCoffeeData();
+  
+  // Pronađi najnižu cijenu iz priceHistory
+  const lowestPriceEntry = coffee.priceHistory && coffee.priceHistory.length > 0
+    ? coffee.priceHistory.reduce((lowest, entry) => 
+        entry.price < lowest.price ? entry : lowest
+      )
+    : null;
+  const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
+  const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
+  
   // Uspoređuj cijene samo iz glavnog dućana kave
   const priceChange = calculatePriceChange(coffee.priceHistory, coffee.storeId);
   const roastStyle = roastLevels[coffee.roast];
@@ -79,7 +91,11 @@ export default function CoffeeCard({ coffee, index = 0 }) {
             
             <div className="flex items-center gap-1 text-sm text-coffee-roast mb-4">
               <Store className="w-4 h-4" />
-              <span>{coffee.store?.name}</span>
+              {lowestPriceStore && lowestPriceEntry ? (
+                <span>{lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})</span>
+              ) : (
+                <span>{coffee.store?.name}</span>
+              )}
             </div>
             
             {/* Arabica/Robusta */}
@@ -104,11 +120,11 @@ export default function CoffeeCard({ coffee, index = 0 }) {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-2xl font-bold text-coffee-dark">
-                  {formatPrice(coffee.priceEUR)}
+                  {formatPrice(displayPrice)}
                 </span>
                 {coffee.weightG && (
                   <div className="text-xs text-coffee-roast">
-                    {formatWeight(coffee.weightG)} • {formatPricePerKg(coffee.priceEUR, coffee.weightG)}
+                    {formatWeight(coffee.weightG)} • {formatPricePerKg(displayPrice, coffee.weightG)}
                   </div>
                 )}
               </div>
