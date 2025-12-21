@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Coffee, TrendingUp, MapPin, Plus, ArrowRight, BarChart3, Star } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
+import { useAuth } from '../context/AuthContext';
 import CoffeeMap from '../components/CoffeeMap';
 import CoffeeMarketPrices from '../components/CoffeeMarketPrices';
 import { PriceComparisonChart } from '../components/PriceChart';
@@ -10,6 +11,7 @@ import { formatPrice, formatDate, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/f
 
 export default function Landing() {
   const { coffees, stats, brands, loading, getStoreById } = useCoffeeData();
+  const { isAdmin, openLoginModal } = useAuth();
   
   // Sortiraj kave po datumu dodavanja (najnovije prvo)
   const recentCoffees = [...coffees].sort((a, b) => {
@@ -101,10 +103,21 @@ export default function Landing() {
                   <Coffee className="w-5 h-5" />
                   Pregledaj kave
                 </Link>
-                <Link to="/add" className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors text-lg">
-                  <Plus className="w-5 h-5" />
-                  Dodaj novu
-                </Link>
+                {isAdmin ? (
+                  <Link to="/add" className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-colors text-lg">
+                    <Plus className="w-5 h-5" />
+                    Dodaj novu
+                  </Link>
+                ) : (
+                  <button
+                    onClick={openLoginModal}
+                    className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white/60 border-2 border-white/20 px-8 py-4 rounded-xl font-semibold cursor-not-allowed opacity-50 text-lg"
+                    title="Prijavi se kao admin da dodaješ kave"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Dodaj novu
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>
