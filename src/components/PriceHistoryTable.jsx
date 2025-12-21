@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Store, Calendar, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
+import { useAuth } from '../context/AuthContext';
 import { formatPrice, formatDate } from '../utils/formatters';
 
 export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact = false }) {
   const { stores, deletePriceEntry, getStoreById } = useCoffeeData();
+  const { isAdmin } = useAuth();
   const [expanded, setExpanded] = useState(!compact);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -124,7 +126,7 @@ export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact
                 </div>
 
                 {/* Gumb za brisanje */}
-                {entry.id && (
+                {entry.id && isAdmin && (
                   <div className="pl-2">
                     <button
                       onClick={() => handleDelete(entry.id)}

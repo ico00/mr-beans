@@ -1,10 +1,30 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import CoffeeForm from '../components/CoffeeForm';
 
 export default function AddCoffee() {
   const navigate = useNavigate();
+  const { isAdmin, loading: authLoading } = useAuth();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+        >
+          <ArrowLeft className="w-16 h-16 text-coffee-dark" />
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    navigate('/');
+    return null;
+  }
 
   const handleSuccess = () => {
     navigate('/coffees');

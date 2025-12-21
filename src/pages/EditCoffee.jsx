@@ -2,16 +2,18 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Coffee } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
+import { useAuth } from '../context/AuthContext';
 import CoffeeForm from '../components/CoffeeForm';
 
 export default function EditCoffee() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { coffees, loading } = useCoffeeData();
+  const { isAdmin, loading: authLoading } = useAuth();
 
   const coffee = coffees.find(c => c.id === id);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <motion.div
@@ -22,6 +24,11 @@ export default function EditCoffee() {
         </motion.div>
       </div>
     );
+  }
+
+  if (!isAdmin) {
+    navigate('/');
+    return null;
   }
 
   if (!coffee) {

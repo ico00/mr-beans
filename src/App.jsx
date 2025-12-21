@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CoffeeProvider } from './hooks/useCoffeeData';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navigation from './components/Navigation';
+import AdminLogin from './components/AdminLogin';
 import Landing from './pages/Landing';
 import CoffeeList from './pages/CoffeeList';
 import TableView from './pages/TableView';
@@ -8,9 +10,11 @@ import AddCoffee from './pages/AddCoffee';
 import CoffeeDetail from './pages/CoffeeDetail';
 import EditCoffee from './pages/EditCoffee';
 
-function App() {
+function AppContent() {
+  const { showAdminLogin, closeLoginModal, login } = useAuth();
+
   return (
-    <CoffeeProvider>
+    <>
       <BrowserRouter>
         <div className="min-h-screen">
           <Navigation />
@@ -24,9 +28,24 @@ function App() {
               <Route path="/edit/:id" element={<EditCoffee />} />
             </Routes>
           </main>
-      </div>
+        </div>
       </BrowserRouter>
-    </CoffeeProvider>
+      <AdminLogin 
+        isOpen={showAdminLogin} 
+        onClose={closeLoginModal} 
+        onLogin={login} 
+      />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <CoffeeProvider>
+        <AppContent />
+      </CoffeeProvider>
+    </AuthProvider>
   );
 }
 

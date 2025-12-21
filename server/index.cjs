@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { login, verifyToken, authMiddleware } = require('./auth.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -51,6 +52,30 @@ const writeJsonFile = (filename, data) => {
   }
 };
 
+// ============ AUTH RUTE ============
+
+// Admin login
+app.post('/api/auth/login', (req, res) => {
+  const { password } = req.body;
+  const result = login(password);
+  if (result.success) {
+    res.json(result);
+  } else {
+    res.status(401).json(result);
+  }
+});
+
+// Verify token
+app.get('/api/auth/verify', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.json({ valid: false });
+  }
+  const token = authHeader.substring(7);
+  const result = verifyToken(token);
+  res.json({ valid: result.valid });
+});
+
 // ============ API RUTE ============
 
 // Dohvati sve kave
@@ -80,7 +105,7 @@ app.get('/api/countries', (req, res) => {
 // ============ CRUD ZA KAVE ============
 
 // Dodaj novu kavu
-app.post('/api/coffees', (req, res) => {
+app.post('/api/coffees', authMiddleware, (req, res) => {
   const coffeeData = req.body;
   const data = readJsonFile('coffees.json');
   
@@ -111,7 +136,7 @@ app.post('/api/coffees', (req, res) => {
 });
 
 // Ažuriraj kavu
-app.put('/api/coffees/:id', (req, res) => {
+app.put('/api/coffees/:id', authMiddleware, (req, res) => {
   const coffeeId = req.params.id;
   const updates = req.body;
   const data = readJsonFile('coffees.json');
@@ -152,7 +177,7 @@ app.put('/api/coffees/:id', (req, res) => {
 // ============ POVIJEST CIJENA ============
 
 // Dodaj novi unos cijene za kavu (s trgovinom i datumom)
-app.post('/api/coffees/:id/price', (req, res) => {
+app.post('/api/coffees/:id/price', authMiddleware, (req, res) => {
   const coffeeId = req.params.id;
   const { date, price, storeId } = req.body;
   const data = readJsonFile('coffees.json');
@@ -207,7 +232,7 @@ app.post('/api/coffees/:id/price', (req, res) => {
 });
 
 // Obriši unos iz povijesti cijena
-app.delete('/api/coffees/:id/price/:priceId', (req, res) => {
+app.delete('/api/coffees/:id/price/:priceId', authMiddleware, (req, res) => {
   const { id: coffeeId, priceId } = req.params;
   const data = readJsonFile('coffees.json');
 
@@ -239,7 +264,7 @@ app.delete('/api/coffees/:id/price/:priceId', (req, res) => {
 });
 
 // Obriši kavu
-app.delete('/api/coffees/:id', (req, res) => {
+app.delete('/api/coffees/:id', authMiddleware, (req, res) => {
   const coffeeId = req.params.id;
   const data = readJsonFile('coffees.json');
 
@@ -266,7 +291,7 @@ app.delete('/api/coffees/:id', (req, res) => {
 // ============ CRUD ZA BRENDOVE ============
 
 // Dodaj novi brend
-app.post('/api/brands', (req, res) => {
+app.post('/api/brands', authMiddleware, (req, res) => {
   const brandData = req.body;
   const data = readJsonFile('brands.json');
 
@@ -293,7 +318,7 @@ app.post('/api/brands', (req, res) => {
 });
 
 // Ažuriraj brend
-app.put('/api/brands/:id', (req, res) => {
+app.put('/api/brands/:id', authMiddleware, (req, res) => {
   const brandId = req.params.id;
   const updates = req.body;
   const data = readJsonFile('brands.json');
@@ -319,7 +344,7 @@ app.put('/api/brands/:id', (req, res) => {
 // ============ CRUD ZA TRGOVINE ============
 
 // Dodaj novu trgovinu
-app.post('/api/stores', (req, res) => {
+app.post('/api/stores', authMiddleware, (req, res) => {
   const storeData = req.body;
   const data = readJsonFile('stores.json');
 
@@ -347,7 +372,7 @@ app.post('/api/stores', (req, res) => {
 // ============ CRUD ZA DRŽAVE ============
 
 // Dodaj novu državu
-app.post('/api/countries', (req, res) => {
+app.post('/api/countries', authMiddleware, (req, res) => {
   const countryData = req.body;
   const data = readJsonFile('countries.json');
 
@@ -456,7 +481,7 @@ const brandsImagesDir = path.join(imagesDir, 'brands');
 });
 
 // Upload slike kave
-app.post('/api/upload/coffee', (req, res) => {
+app.post('/api/upload/coffee', authMiddleware, (req, res) => {
   try {
     const { filename, data, mimeType } = req.body;
     
@@ -495,7 +520,7 @@ app.post('/api/upload/coffee', (req, res) => {
 });
 
 // Upload loga brenda
-app.post('/api/upload/brand', (req, res) => {
+app.post('/api/upload/brand', authMiddleware, (req, res) => {
   try {
     const { filename, data, mimeType } = req.body;
     

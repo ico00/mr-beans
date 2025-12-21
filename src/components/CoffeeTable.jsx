@@ -5,9 +5,11 @@ import { ChevronUp, ChevronDown, Eye, Edit, Trash2 } from 'lucide-react';
 import { CoffeeBeanRatingSmall } from './CoffeeBeanRating';
 import { formatPrice, formatDate, roastLevels } from '../utils/formatters';
 import { useCoffeeData } from '../hooks/useCoffeeData';
+import { useAuth } from '../context/AuthContext';
 
 export default function CoffeeTable({ coffees }) {
   const { deleteCoffee } = useCoffeeData();
+  const { isAdmin } = useAuth();
   const [sortBy, setSortBy] = useState('brand');
   const [sortOrder, setSortOrder] = useState('asc');
 
@@ -200,20 +202,24 @@ export default function CoffeeTable({ coffees }) {
                   >
                     <Eye className="w-4 h-4" />
                   </Link>
-                  <Link 
-                    to={`/edit/${coffee.id}`}
-                    className="p-2 rounded-lg hover:bg-coffee-light/30 text-coffee-dark transition-colors"
-                    title="Uredi"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Link>
-                  <button 
-                    onClick={(e) => handleDelete(e, coffee.id)}
-                    className="p-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
-                    title="Obriši"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {isAdmin && (
+                    <>
+                      <Link 
+                        to={`/edit/${coffee.id}`}
+                        className="p-2 rounded-lg hover:bg-coffee-light/30 text-coffee-dark transition-colors"
+                        title="Uredi"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Link>
+                      <button 
+                        onClick={(e) => handleDelete(e, coffee.id)}
+                        className="p-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                        title="Obriši"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </td>
             </motion.tr>

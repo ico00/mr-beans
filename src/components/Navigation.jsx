@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coffee, Home, Table, Grid3X3, Plus, Menu, X } from 'lucide-react';
+import { Coffee, Home, Table, Grid3X3, Plus, Menu, X, Lock, LockOpen } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navigation() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAdmin, openLoginModal, logout } = useAuth();
 
   const navLinks = [
     { path: '/', label: 'Početna', icon: Home },
     { path: '/coffees', label: 'Kave', icon: Coffee },
     { path: '/table', label: 'Tablica', icon: Table },
+  ];
+  
+  const adminNavLinks = [
     { path: '/add', label: 'Dodaj', icon: Plus },
   ];
 
@@ -66,6 +71,40 @@ export default function Navigation() {
                 )}
               </Link>
             ))}
+            {isAdmin && adminNavLinks.map(({ path, label, icon: Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200
+                  ${isActive(path) 
+                    ? 'text-coffee-dark' 
+                    : 'text-coffee-roast hover:text-coffee-dark hover:bg-coffee-cream/50'
+                  }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{label}</span>
+                {isActive(path) && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute inset-0 bg-coffee-light/30 rounded-xl -z-10"
+                    transition={{ type: 'spring', duration: 0.5 }}
+                  />
+                )}
+              </Link>
+            ))}
+            {/* Admin Button */}
+            <button
+              onClick={isAdmin ? logout : openLoginModal}
+              className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                isAdmin 
+                  ? 'text-green-600 hover:text-green-700 hover:bg-green-50' 
+                  : 'text-coffee-roast hover:text-coffee-dark hover:bg-coffee-cream/50'
+              }`}
+              title={isAdmin ? 'Odjavi se kao admin' : 'Prijavi se kao admin'}
+            >
+              {isAdmin ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+              <span className="hidden lg:inline">{isAdmin ? 'Admin' : 'Admin'}</span>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -103,6 +142,36 @@ export default function Navigation() {
                   <span>{label}</span>
                 </Link>
               ))}
+              {isAdmin && adminNavLinks.map(({ path, label, icon: Icon }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all
+                    ${isActive(path)
+                      ? 'bg-coffee-light/30 text-coffee-dark'
+                      : 'text-coffee-roast hover:bg-coffee-cream/50'
+                    }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{label}</span>
+                </Link>
+              ))}
+              {/* Admin Button Mobile */}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  isAdmin ? logout() : openLoginModal();
+                }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all w-full ${
+                  isAdmin 
+                    ? 'bg-green-50 text-green-600' 
+                    : 'text-coffee-roast hover:bg-coffee-cream/50'
+                }`}
+              >
+                {isAdmin ? <LockOpen className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+                <span>{isAdmin ? 'Odjavi se' : 'Admin Login'}</span>
+              </button>
             </div>
           </motion.div>
         )}

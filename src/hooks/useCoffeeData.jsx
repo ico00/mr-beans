@@ -5,6 +5,16 @@ const CoffeeContext = createContext(null);
 // API base URL
 const API_BASE = '/api';
 
+// Helper funkcija za dohvaćanje auth headers-a
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('adminToken');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 export function CoffeeProvider({ children }) {
   const [coffees, setCoffees] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -58,7 +68,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/coffees`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(coffee)
       });
 
@@ -80,7 +90,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/coffees/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(updates)
       });
 
@@ -103,7 +113,8 @@ export function CoffeeProvider({ children }) {
   const deleteCoffee = async (id) => {
     try {
       const response = await fetch(`${API_BASE}/coffees/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       if (!response.ok) {
@@ -122,7 +133,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/coffees/${coffeeId}/price`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(priceData)
       });
 
@@ -168,7 +179,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/brands`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: brandName, logo })
       });
 
@@ -190,7 +201,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/brands/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(updates)
       });
 
@@ -214,7 +225,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/stores`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: storeName })
       });
 
@@ -236,7 +247,7 @@ export function CoffeeProvider({ children }) {
     try {
       const response = await fetch(`${API_BASE}/countries`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: countryName })
       });
 

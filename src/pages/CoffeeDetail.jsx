@@ -5,6 +5,7 @@ import {
   TrendingUp, TrendingDown, Minus, Coffee, Share2, History
 } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
+import { useAuth } from '../context/AuthContext';
 import CoffeeBeanRating from '../components/CoffeeBeanRating';
 import PriceChart, { PriceByStoreChart } from '../components/PriceChart';
 import AddPriceEntry from '../components/AddPriceEntry';
@@ -15,6 +16,7 @@ export default function CoffeeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { coffees, deleteCoffee, loading } = useCoffeeData();
+  const { isAdmin } = useAuth();
 
   const coffee = coffees.find(c => c.id === id);
 
@@ -104,20 +106,24 @@ export default function CoffeeDetail() {
             >
               <Share2 className="w-5 h-5" />
             </button>
-            <Link
-              to={`/edit/${coffee.id}`}
-              className="p-2 rounded-xl hover:bg-coffee-cream/50 text-coffee-roast transition-colors"
-              title="Uredi"
-            >
-              <Edit className="w-5 h-5" />
-            </Link>
-            <button
-              onClick={handleDelete}
-              className="p-2 rounded-xl hover:bg-red-100 text-red-600 transition-colors"
-              title="Obriši"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+            {isAdmin && (
+              <>
+                <Link
+                  to={`/edit/${coffee.id}`}
+                  className="p-2 rounded-xl hover:bg-coffee-cream/50 text-coffee-roast transition-colors"
+                  title="Uredi"
+                >
+                  <Edit className="w-5 h-5" />
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="p-2 rounded-xl hover:bg-red-100 text-red-600 transition-colors"
+                  title="Obriši"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </>
+            )}
           </div>
         </motion.div>
 
@@ -341,7 +347,7 @@ export default function CoffeeDetail() {
               </h3>
               
               <div className="space-y-6">
-                <AddPriceEntry coffeeId={coffee.id} />
+                {isAdmin && <AddPriceEntry coffeeId={coffee.id} />}
                 
                 <PriceHistoryTable 
                   coffeeId={coffee.id} 
