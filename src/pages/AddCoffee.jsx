@@ -1,12 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import CoffeeForm from '../components/CoffeeForm';
 
 export default function AddCoffee() {
   const navigate = useNavigate();
   const { isAdmin, loading: authLoading } = useAuth();
+
+  // Čekaj dok se autentifikacija ne učita prije redirecta
+  useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      navigate('/');
+    }
+  }, [isAdmin, authLoading, navigate]);
 
   if (authLoading) {
     return (
@@ -22,7 +30,6 @@ export default function AddCoffee() {
   }
 
   if (!isAdmin) {
-    navigate('/');
     return null;
   }
 

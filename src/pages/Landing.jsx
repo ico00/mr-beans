@@ -317,9 +317,23 @@ export default function Landing() {
                       {coffee.name}
                     </h3>
                     
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">{coffee.country?.flag}</span>
-                      <span className="text-sm text-coffee-roast">{coffee.country?.name}</span>
+                    <div className="flex items-center gap-2 mb-4 flex-wrap">
+                      {coffee.countries?.length > 0 ? (
+                        coffee.countries.map((country, idx) => (
+                          <span key={country.id} className="flex items-center gap-1 text-sm text-coffee-roast">
+                            <span className="text-lg">{country.flag}</span>
+                            <span>{country.name}</span>
+                            {idx < coffee.countries.length - 1 && (
+                              <span className="text-neutral-300 mx-1">/</span>
+                            )}
+                          </span>
+                        ))
+                      ) : coffee.country ? (
+                        <>
+                          <span className="text-lg">{coffee.country.flag}</span>
+                          <span className="text-sm text-coffee-roast">{coffee.country.name}</span>
+                        </>
+                      ) : null}
                     </div>
                     
                     {/* Težina i dućan s najnižom cijenom */}

@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import { X, Coffee, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { IMAGES_FOLDER } from '../utils/formatters';
 import svgPanZoom from 'svg-pan-zoom';
 
 // 1. IZOLIRANI STILOVI - Sprječavaju kvarenje ostatka stranice
@@ -164,7 +166,7 @@ export default function CoffeeMap() {
   return (
     <div id="coffee-map-container" className="rounded-2xl p-6 shadow-xl bg-white/50 backdrop-blur-sm border border-neutral-200">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-coffee-dark tracking-tight">Interaktivna karta kave</h3>
+        <h3 className="text-xl font-bold text-coffee-dark tracking-tight">Između rakove i jarčeve obratnice...</h3>
         <div className="flex gap-2">
             <button onClick={() => panZoomRef.current?.zoomIn()} className="p-2 bg-white rounded-lg border border-neutral-200 shadow-sm hover:bg-neutral-50 text-neutral-600 transition-colors">
               <ZoomIn size={18}/>
@@ -232,10 +234,31 @@ export default function CoffeeMap() {
                     {coffees
                       .filter(c => (c.countryIds || [c.countryId]).includes(currentSelected.id))
                       .map(c => (
-                        <div key={c.id} className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-neutral-100 shadow-sm hover:shadow-md transition-shadow">
-                          <Coffee size={20} className="text-coffee-primary" />
-                          <span className="font-bold text-coffee-dark">{c.name}</span>
-                        </div>
+                        <Link 
+                          key={c.id} 
+                          to={`/coffee/${c.id}`}
+                          className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-neutral-100 shadow-sm hover:shadow-md transition-all hover:scale-105"
+                        >
+                          <div className="w-12 h-12 bg-coffee-light/30 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            {c.image ? (
+                              <img 
+                                src={c.image.startsWith('http') ? c.image : `${IMAGES_FOLDER}${c.image}`}
+                                alt={c.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            ) : null}
+                            {(!c.image || c.image === '') && (
+                              <Coffee size={20} className="text-coffee-primary" />
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs text-coffee-roast truncate">{c.brand?.name}</span>
+                            <span className="font-bold text-coffee-dark truncate">{c.name}</span>
+                          </div>
+                        </Link>
                     ))}
                   </div>
                 </div>

@@ -156,7 +156,8 @@ export function CoffeeProvider({ children }) {
   const deletePriceEntry = async (coffeeId, priceId) => {
     try {
       const response = await fetch(`${API_BASE}/coffees/${coffeeId}/price/${priceId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       if (!response.ok) {

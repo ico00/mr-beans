@@ -1,10 +1,40 @@
 {
   "stores": [
-    { "id": "1", "name": "Spar", "type": "Supermarket", "website": "https://www.spar.hr" },
-    { "id": "2", "name": "Konzum", "type": "Supermarket", "website": "https://www.konzum.hr" },
-    { "id": "3", "name": "NajKava", "type": "Online trgovina", "website": "https://www.najkava.com.hr" },
-    { "id": "4", "name": "Mall.hr", "type": "Online trgovina", "website": "https://www.mall.hr" },
-    { "id": "5", "name": "Svijet medija", "type": "Online trgovina", "website": "https://www.svijet-medija.hr" }
+    {
+      "id": "1",
+      "name": "Spar",
+      "type": "Supermarket",
+      "website": "https://www.spar.hr"
+    },
+    {
+      "id": "2",
+      "name": "Konzum",
+      "type": "Supermarket",
+      "website": "https://www.konzum.hr"
+    },
+    {
+      "id": "3",
+      "name": "NajKava",
+      "type": "Online trgovina",
+      "website": "https://www.najkava.com.hr"
+    },
+    {
+      "id": "4",
+      "name": "Mall.hr",
+      "type": "Online trgovina",
+      "website": "https://www.mall.hr"
+    },
+    {
+      "id": "5",
+      "name": "Svijet medija",
+      "type": "Online trgovina",
+      "website": "https://www.svijet-medija.hr"
+    },
+    {
+      "id": "1766347164381",
+      "name": "Nespresso",
+      "type": "Trgovina",
+      "website": ""
+    }
   ]
 }
-

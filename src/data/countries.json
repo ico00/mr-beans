@@ -6,7 +6,11 @@
       "flag": "🇧🇷",
       "region": "Južna Amerika",
       "coffeeProduction": "Najveći proizvođač kave na svijetu",
-      "varieties": ["Bourbon", "Catuai", "Mundo Novo"]
+      "varieties": [
+        "Bourbon",
+        "Catuai",
+        "Mundo Novo"
+      ]
     },
     {
       "id": "ET",
@@ -14,7 +18,11 @@
       "flag": "🇪🇹",
       "region": "Afrika",
       "coffeeProduction": "Domovina kave",
-      "varieties": ["Yirgacheffe", "Sidamo", "Harrar"]
+      "varieties": [
+        "Yirgacheffe",
+        "Sidamo",
+        "Harrar"
+      ]
     },
     {
       "id": "CO",
@@ -22,7 +30,11 @@
       "flag": "🇨🇴",
       "region": "Južna Amerika",
       "coffeeProduction": "Treći najveći proizvođač",
-      "varieties": ["Caturra", "Castillo", "Typica"]
+      "varieties": [
+        "Caturra",
+        "Castillo",
+        "Typica"
+      ]
     },
     {
       "id": "VN",
@@ -30,7 +42,10 @@
       "flag": "🇻🇳",
       "region": "Azija",
       "coffeeProduction": "Drugi najveći proizvođač",
-      "varieties": ["Robusta", "Catimor"]
+      "varieties": [
+        "Robusta",
+        "Catimor"
+      ]
     },
     {
       "id": "KE",
@@ -38,7 +53,11 @@
       "flag": "🇰🇪",
       "region": "Afrika",
       "coffeeProduction": "Poznata po AA gradaciji",
-      "varieties": ["SL28", "SL34", "Ruiru 11"]
+      "varieties": [
+        "SL28",
+        "SL34",
+        "Ruiru 11"
+      ]
     },
     {
       "id": "GT",
@@ -46,7 +65,11 @@
       "flag": "🇬🇹",
       "region": "Srednja Amerika",
       "coffeeProduction": "Vulkanska kava visoke kvalitete",
-      "varieties": ["Bourbon", "Caturra", "Typica"]
+      "varieties": [
+        "Bourbon",
+        "Caturra",
+        "Typica"
+      ]
     },
     {
       "id": "CR",
@@ -54,7 +77,11 @@
       "flag": "🇨🇷",
       "region": "Srednja Amerika",
       "coffeeProduction": "100% Arabica zakonom",
-      "varieties": ["Caturra", "Catuai", "Geisha"]
+      "varieties": [
+        "Caturra",
+        "Catuai",
+        "Geisha"
+      ]
     },
     {
       "id": "ID",
@@ -62,7 +89,11 @@
       "flag": "🇮🇩",
       "region": "Azija",
       "coffeeProduction": "Poznat po Kopi Luwak",
-      "varieties": ["Sumatra Mandheling", "Java", "Sulawesi"]
+      "varieties": [
+        "Sumatra Mandheling",
+        "Java",
+        "Sulawesi"
+      ]
     },
     {
       "id": "HN",
@@ -70,7 +101,12 @@
       "flag": "🇭🇳",
       "region": "Srednja Amerika",
       "coffeeProduction": "Šesti najveći proizvođač kave na svijetu",
-      "varieties": ["Bourbon", "Catuai", "Pacas", "Lempira"]
+      "varieties": [
+        "Bourbon",
+        "Catuai",
+        "Pacas",
+        "Lempira"
+      ]
     },
     {
       "id": "IN",
@@ -78,7 +114,48 @@
       "flag": "🇮🇳",
       "region": "Azija",
       "coffeeProduction": "Sedmi najveći proizvođač, poznata po monsunskoj kavi",
-      "varieties": ["Monsooned Malabar", "Mysore", "Kent", "S795"]
+      "varieties": [
+        "Monsooned Malabar",
+        "Mysore",
+        "Kent",
+        "S795"
+      ]
+    },
+    {
+      "id": "mix",
+      "name": "Mix",
+      "flag": "🌍",
+      "region": "Svjetska",
+      "coordinates": {
+        "lat": 0,
+        "lng": 0
+      },
+      "coffeeProduction": "",
+      "varieties": []
+    },
+    {
+      "id": "UG",
+      "name": "Uganda",
+      "flag": "🇺🇬",
+      "region": "Afrika",
+      "coordinates": {
+        "lat": 0,
+        "lng": 0
+      },
+      "coffeeProduction": "",
+      "varieties": []
+    },
+    {
+      "id": "MX",
+      "name": "Meksiko",
+      "flag": "🇲🇽",
+      "region": "Srednja Amerika",
+      "coordinates": {
+        "lat": 0,
+        "lng": 0
+      },
+      "coffeeProduction": "",
+      "varieties": []
     }
   ]
 }

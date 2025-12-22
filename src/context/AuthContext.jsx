@@ -94,6 +94,65 @@ export function AuthProvider({ children, onAuthChange }) {
   // Provjeri postojeći token pri učitavanju
   useEffect(() => {
     const checkExistingToken = async () => {
+      // Na localhostu (development) automatski omogući admin ovlasti
+      const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost'
+      
+      if (isDevelopment) {
+        console.log('🔓 Development mode: automatski admin ovlasti omogućene')
+        
+        // Provjeri da li postoji validan token
+        let token = localStorage.getItem('adminToken')
+        
+        // Ako nema tokena, automatski se prijavi s default lozinkom
+        if (!token) {
+          try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password: 'admin123' })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              if (data.success && data.token) {
+                token = data.token
+                localStorage.setItem('adminToken', token)
+                console.log('✅ Automatski login u development mode-u uspješan')
+              }
+            } else {
+              console.warn('⚠️ Server je dostupan ali login nije uspio. Provjerite da li je server pokrenut.')
+            }
+          } catch (error) {
+            console.warn('⚠️ Server nije dostupan. Pokrenite server s `npm run server` za potpune admin ovlasti.')
+            console.warn('   Za sada će admin ovlasti biti omogućene, ali API pozivi neće raditi bez servera.')
+          }
+        } else {
+          // Provjeri da li je postojeći token validan
+          try {
+            const isValid = await verifyToken(token)
+            if (!isValid) {
+              // Token nije validan, pokušaj novi login
+              token = null
+              localStorage.removeItem('adminToken')
+            }
+          } catch (error) {
+            console.warn('⚠️ Greška pri provjeri tokena:', error)
+          }
+        }
+        
+        // Postavi admin status - u development mode-u uvijek omogući admin
+        setIsAdmin(true)
+        if (token) {
+          setAdminToken(token)
+          console.log('🔐 Admin token postavljen')
+        } else {
+          console.log('🔓 Development mode: admin omogućen, ali token nije dostupan (pokrenite server)')
+        }
+        setLoading(false)
+        return
+      }
+      
+      // U produkciji provjeri token
       const token = localStorage.getItem('adminToken')
       if (token) {
         await verifyToken(token)

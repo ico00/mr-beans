@@ -9,7 +9,10 @@
       "countryIds": [
         "brazil",
         "honduras",
-        "colombia"
+        "colombia",
+        "BR",
+        "CO",
+        "GT"
       ],
       "storeId": "3",
       "priceEUR": 34.59,
@@ -35,7 +38,8 @@
       "roast": "Medium",
       "arabicaPercentage": 100,
       "countryIds": [
-        "colombia"
+        "colombia",
+        "CO"
       ],
       "storeId": "3",
       "priceEUR": 34.09,
@@ -67,13 +71,14 @@
       "roast": "Medium",
       "arabicaPercentage": 70,
       "countryIds": [
-        "brazil"
+        "brazil",
+        "BR"
       ],
       "storeId": "3",
       "priceEUR": 34.09,
       "weightG": 1000,
       "rating": 5,
-      "image": "1766084879730-2214-d-tierra_brasile-beans-_2.png.png",
+      "image": "1766402418456-lavazza-tierra-brasile.png",
       "robustaPercentage": 30,
       "id": "1766084899441",
       "priceHistory": [
@@ -94,7 +99,11 @@
       "arabicaPercentage": 50,
       "countryIds": [
         "indija",
-        "brazil"
+        "brazil",
+        "BR",
+        "HN",
+        "VN",
+        "uganda"
       ],
       "storeId": "2",
       "priceEUR": 38.99,
@@ -138,13 +147,17 @@
       "roast": "Medium",
       "arabicaPercentage": 70,
       "countryIds": [
-        "brazil"
+        "brazil",
+        "BR",
+        "CO",
+        "VN",
+        "ID"
       ],
       "storeId": "3",
       "priceEUR": 29.09,
       "weightG": 1000,
       "rating": 3,
-      "image": "1766316617910-lavazza-cremoso.png",
+      "image": "1766402217408-lavazza-cremoso.png",
       "robustaPercentage": 30,
       "id": "1766316620337",
       "priceHistory": [
@@ -201,6 +214,64 @@
         }
       ],
       "createdAt": "2025-12-21"
+    },
+    {
+      "brandId": "4",
+      "name": "Ispirazione Roma",
+      "type": "Nespresso kapsula",
+      "roast": "Blonde",
+      "arabicaPercentage": 70,
+      "countryIds": [
+        "BR",
+        "meksiko",
+        "uganda",
+        "UG",
+        "MX"
+      ],
+      "storeId": "1766347164381",
+      "priceEUR": 5.1,
+      "weightG": 55,
+      "rating": 5,
+      "image": "1766346793444-nespresso-roma.png",
+      "robustaPercentage": 30,
+      "id": "1766346800816",
+      "priceHistory": [
+        {
+          "id": "1766346800816",
+          "date": "2025-12-21",
+          "price": 5.1,
+          "storeId": "1"
+        }
+      ],
+      "createdAt": "2025-12-21"
+    },
+    {
+      "brandId": "1",
+      "name": "Crema E Gusto classico",
+      "type": "Mljevena kava",
+      "roast": "Dark",
+      "arabicaPercentage": 50,
+      "countryIds": [
+        "BR",
+        "VN",
+        "ID"
+      ],
+      "storeId": "2",
+      "priceEUR": 8.99,
+      "weightG": 250,
+      "rating": 3,
+      "image": "1766402173256-lavazza-crema_e_gusto.png",
+      "robustaPercentage": 50,
+      "id": "1766402185216",
+      "priceHistory": [
+        {
+          "id": "1766402185217",
+          "date": "2025-12-22",
+          "price": 8.99,
+          "storeId": "2"
+        }
+      ],
+      "createdAt": "2025-12-22"
     }
   ]
 }

@@ -265,3 +265,28 @@ h1, h2, h3, h4 {
   background: var(--coffee-dark);
   color: white;
 }
+
+/* SVG world map country styling */
+#world-map g.country path,
+#world-map g.country .st0,
+#world-map g.country .st1,
+#world-map g.country .st2,
+#world-map g.country .st3,
+#world-map g.country .st4,
+#world-map g.country .st5,
+#world-map g.country .st6 {
+  fill: #d4c4a8 !important;
+  transition: fill 0.15s ease;
+  pointer-events: visiblePainted;
+}
+
+#world-map g.country:hover path,
+#world-map g.country:hover .st0,
+#world-map g.country:hover .st1,
+#world-map g.country:hover .st2,
+#world-map g.country:hover .st3,
+#world-map g.country:hover .st4,
+#world-map g.country:hover .st5,
+#world-map g.country:hover .st6 {
+  fill: #8b5a2b !important;
+}

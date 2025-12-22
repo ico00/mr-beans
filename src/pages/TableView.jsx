@@ -31,19 +31,25 @@ export default function TableView() {
 
   // Export to CSV
   const exportToCSV = () => {
-    const headers = ['Naziv', 'Brend', 'Vrsta', 'Prženje', 'Arabica %', 'Robusta %', 'Država', 'Trgovina', 'Cijena (EUR)', 'Ocjena'];
-    const rows = filteredCoffees.map(coffee => [
-      coffee.name,
-      coffee.brand?.name || '',
-      coffee.type,
-      coffee.roast,
-      coffee.arabicaPercentage,
-      coffee.robustaPercentage,
-      coffee.country?.name || '',
-      coffee.store?.name || '',
-      coffee.priceEUR,
-      coffee.rating
-    ]);
+    const headers = ['Naziv', 'Brend', 'Vrsta', 'Prženje', 'Arabica %', 'Robusta %', 'Države', 'Trgovina', 'Cijena (EUR)', 'Ocjena'];
+    const rows = filteredCoffees.map(coffee => {
+      const countryNames = coffee.countries?.length
+        ? coffee.countries.map(c => c.name).join(' / ')
+        : (coffee.country?.name || '');
+
+      return [
+        coffee.name,
+        coffee.brand?.name || '',
+        coffee.type,
+        coffee.roast,
+        coffee.arabicaPercentage,
+        coffee.robustaPercentage,
+        countryNames,
+        coffee.store?.name || '',
+        coffee.priceEUR,
+        coffee.rating
+      ];
+    });
     
     const csvContent = [
       headers.join(','),
