@@ -14,35 +14,35 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
   const { getAuthHeaders } = useAuth();
   
   // Helper za upload slike (sada koristi auth headers)
-  const uploadImage = async (file, type = 'coffee') => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const response = await fetch(`/api/upload/${type}`, {
-            method: 'POST',
+const uploadImage = async (file, type = 'coffee') => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const response = await fetch(`/api/upload/${type}`, {
+          method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({
-              filename: file.name,
-              data: reader.result,
-              mimeType: file.type
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Upload nije uspio');
-          }
-          
-          const result = await response.json();
-          resolve(result);
-        } catch (error) {
-          reject(error);
+          body: JSON.stringify({
+            filename: file.name,
+            data: reader.result,
+            mimeType: file.type
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Upload nije uspio');
         }
-      };
-      reader.onerror = () => reject(new Error('Greška pri čitanju datoteke'));
-      reader.readAsDataURL(file);
-    });
-  };
+        
+        const result = await response.json();
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = () => reject(new Error('Greška pri čitanju datoteke'));
+    reader.readAsDataURL(file);
+  });
+};
   
   const [formData, setFormData] = useState({
     brandId: initialData?.brandId || '',
@@ -75,7 +75,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
   const logoInputRef = useRef(null);
 
   const coffeeTypes = ['Zrno', 'Nespresso kapsula', 'Mljevena kava'];
-  const roastTypes = ['Blonde', 'Medium', 'Dark'];
+  const roastTypes = ['Light', 'Medium', 'Dark'];
   const arabicaSteps = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
   const handleChange = (field, value) => {
@@ -108,9 +108,9 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
     if (newBrand.name.trim()) {
       try {
         const brand = await addBrand(newBrand.name.trim(), newBrand.logo);
-        setFormData(prev => ({ ...prev, brandId: brand.id }));
-        setNewBrand({ name: '', logo: '' });
-        setShowNewBrand(false);
+      setFormData(prev => ({ ...prev, brandId: brand.id }));
+      setNewBrand({ name: '', logo: '' });
+      setShowNewBrand(false);
       } catch (error) {
         console.error('Greška pri dodavanju brenda:', error);
         setErrors(prev => ({ ...prev, brandId: 'Greška pri dodavanju brenda. Provjerite da li ste prijavljeni kao admin.' }));
@@ -122,9 +122,9 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
     if (newStore.trim()) {
       try {
         const store = await addStore(newStore.trim());
-        setFormData(prev => ({ ...prev, storeId: store.id }));
-        setNewStore('');
-        setShowNewStore(false);
+      setFormData(prev => ({ ...prev, storeId: store.id }));
+      setNewStore('');
+      setShowNewStore(false);
       } catch (error) {
         console.error('Greška pri dodavanju trgovine:', error);
         setErrors(prev => ({ ...prev, storeId: 'Greška pri dodavanju trgovine. Provjerite da li ste prijavljeni kao admin.' }));
@@ -136,12 +136,12 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
     if (newCountry.trim()) {
       try {
         const country = await addCountry(newCountry.trim());
-        setFormData(prev => ({ 
-          ...prev, 
-          countryIds: [...(prev.countryIds || []), country.id] 
-        }));
-        setNewCountry('');
-        setShowNewCountry(false);
+      setFormData(prev => ({ 
+        ...prev, 
+        countryIds: [...(prev.countryIds || []), country.id] 
+      }));
+      setNewCountry('');
+      setShowNewCountry(false);
       } catch (error) {
         console.error('Greška pri dodavanju države:', error);
         setErrors(prev => ({ ...prev, countryIds: 'Greška pri dodavanju države. Provjerite da li ste prijavljeni kao admin.' }));
@@ -347,7 +347,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
                   className={`form-input ${errors.brandId ? 'border-error' : ''}`}
                 >
                   <option value="">Odaberi brend</option>
-                  {brands.map(brand => (
+                  {[...brands].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(brand => (
                     <option key={brand.id} value={brand.id}>{brand.name}</option>
                   ))}
                 </select>
@@ -558,7 +558,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
           <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3 rounded-xl ${
             errors.countryIds ? 'bg-red-50 border-2 border-error' : 'bg-coffee-cream/30'
           }`}>
-            {countries.map(country => {
+            {[...countries].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(country => {
               const isSelected = formData.countryIds?.includes(country.id);
               return (
                 <button
@@ -609,7 +609,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
                 className={`form-input ${errors.storeId ? 'border-error' : ''}`}
               >
                 <option value="">Odaberi trgovinu</option>
-                {stores.map(store => (
+                {[...stores].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(store => (
                   <option key={store.id} value={store.id}>{store.name}</option>
                 ))}
               </select>
@@ -680,6 +680,7 @@ export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) 
             onChange={(value) => handleChange('rating', value)}
             size={32}
             showLabel
+            hideLabel
           />
         </div>
 

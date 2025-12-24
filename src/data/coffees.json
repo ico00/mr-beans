@@ -42,7 +42,7 @@
         "CO"
       ],
       "storeId": "3",
-      "priceEUR": 34.09,
+      "priceEUR": 34.19,
       "weightG": 1000,
       "rating": 5,
       "image": "1766083970041-2200-d-tierra_colombia-beans-_2.png",
@@ -60,6 +60,12 @@
           "date": "2025-12-18",
           "price": 37.99,
           "storeId": "5"
+        },
+        {
+          "id": "1766584037313",
+          "date": "2025-12-24",
+          "price": 34.19,
+          "storeId": "3"
         }
       ],
       "createdAt": "2025-12-18"
@@ -219,7 +225,7 @@
       "brandId": "4",
       "name": "Ispirazione Roma",
       "type": "Nespresso kapsula",
-      "roast": "Blonde",
+      "roast": "Light",
       "arabicaPercentage": 70,
       "countryIds": [
         "BR",

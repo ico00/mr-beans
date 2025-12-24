@@ -47,6 +47,11 @@
   --color-accent-copper: var(--accent-copper);
   --color-accent-sage: var(--accent-sage);
   
+  --color-error: var(--error);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;

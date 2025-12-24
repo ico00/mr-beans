@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, TrendingDown, Minus, RefreshCw, ExternalLink, Coffee, AlertCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, RefreshCw, ExternalLink, Coffee, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 
 // Commodity codes for coffee futures
 const COFFEE_COMMODITIES = [
@@ -257,15 +257,39 @@ export default function CoffeeMarketPrices({ compact = false }) {
 
       {/* Market info */}
       <div className="mt-6 pt-4 border-t border-neutral-200">
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-coffee-roast">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Live/Simulated indicator */}
+            {prices?.isLive ? (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-100 text-green-700 font-medium">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>Live podaci</span>
+              </span>
+            ) : prices?.source?.includes('Fallback') ? (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-700 font-medium">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>Djelomično live</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 font-medium">
+                <WifiOff className="w-3.5 h-3.5" />
+                <span>Simulirani podaci</span>
+              </span>
+            )}
+            
+            <span className="text-coffee-roast flex items-center gap-1">
               <Coffee className="w-3 h-3" />
-              Izvor: ICE Futures
+              Izvor: {prices?.source || 'ICE Futures'}
             </span>
-            <span>•</span>
-            <span>Cijene su indikativne</span>
+            
+            {!prices?.isLive && !prices?.source?.includes('Fallback') && (
+              <>
+                <span className="text-coffee-roast">•</span>
+                <span className="text-coffee-roast">Cijene su indikativne</span>
+              </>
+            )}
           </div>
+          
           <a 
             href="https://www.ice.com/products/15/Coffee-C-Futures" 
             target="_blank" 

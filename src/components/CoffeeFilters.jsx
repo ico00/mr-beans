@@ -8,7 +8,7 @@ export default function CoffeeFilters({ filters, setFilters }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const coffeeTypes = ['Zrno', 'Nespresso kapsula', 'Mljevena kava'];
-  const roastTypes = ['Blonde', 'Medium', 'Dark'];
+  const roastTypes = ['Light', 'Medium', 'Dark'];
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -118,7 +118,7 @@ export default function CoffeeFilters({ filters, setFilters }) {
                     className="form-input"
                   >
                     <option value="">Svi brendovi</option>
-                    {brands.map(brand => (
+                    {[...brands].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(brand => (
                       <option key={brand.id} value={brand.id}>{brand.name}</option>
                     ))}
                   </select>
@@ -133,7 +133,7 @@ export default function CoffeeFilters({ filters, setFilters }) {
                     className="form-input"
                   >
                     <option value="">Sve trgovine</option>
-                    {stores.map(store => (
+                    {[...stores].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(store => (
                       <option key={store.id} value={store.id}>{store.name}</option>
                     ))}
                   </select>
@@ -148,7 +148,7 @@ export default function CoffeeFilters({ filters, setFilters }) {
                     className="form-input"
                   >
                     <option value="">Sve države</option>
-                    {countries.map(country => (
+                    {[...countries].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(country => (
                       <option key={country.id} value={country.id}>
                         {country.flag} {country.name}
                       </option>

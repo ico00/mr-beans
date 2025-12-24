@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 // Koristi relativni /api u produkciji; u developmentu se može postaviti VITE_API_URL
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -24,7 +25,9 @@ function AdminLogin({ isOpen, onClose, onLogin }) {
             if (!response.ok) {
                 // Ako je status 404 ili 500, server možda nije pokrenut
                 if (response.status === 404 || response.status >= 500) {
-                    setError('Server nije dostupan. Provjerite da li je backend server pokrenut.');
+                    const errorMsg = 'Server nije dostupan. Provjerite da li je backend server pokrenut.';
+                    setError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
             }
@@ -36,19 +39,25 @@ function AdminLogin({ isOpen, onClose, onLogin }) {
                 localStorage.setItem('adminToken', data.token);
                 setPassword('');
                 onLogin(data.token);
+                toast.success('Uspješno prijavljen kao admin!');
                 onClose();
             } else {
-                setError(data.message || 'Pogrešna lozinka');
+                const errorMessage = data.message || data.error?.message || 'Pogrešna lozinka';
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (err) {
             // Detaljnija greška ovisno o tipu problema
+            let errorMsg = '';
             if (err.name === 'TypeError' && (err.message.includes('fetch') || err.message.includes('Failed'))) {
-                setError(`Nije moguće povezati se sa serverom (${API_URL}). Provjerite da li je backend server pokrenut.`);
+                errorMsg = `Nije moguće povezati se sa serverom (${API_URL}). Provjerite da li je backend server pokrenut.`;
             } else if (err.name === 'SyntaxError') {
-                setError('Server je vratio neispravan odgovor. Provjerite da li je backend server ispravno konfiguriran.');
+                errorMsg = 'Server je vratio neispravan odgovor. Provjerite da li je backend server ispravno konfiguriran.';
             } else {
-                setError(`Greška pri povezivanju sa serverom: ${err.message}`);
+                errorMsg = `Greška pri povezivanju sa serverom: ${err.message}`;
             }
+            setError(errorMsg);
+            toast.error(errorMsg);
             console.error('Login error:', err);
             console.error('API URL:', API_URL);
         } finally {

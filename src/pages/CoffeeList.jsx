@@ -1,14 +1,16 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Grid3X3, List, Coffee } from 'lucide-react';
+import { Grid3X3, List, Coffee, ArrowUpDown } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import CoffeeCard from '../components/CoffeeCard';
 import CoffeeFilters from '../components/CoffeeFilters';
-import { filterCoffees } from '../utils/formatters';
+import { filterCoffees, sortCoffees } from '../utils/formatters';
 
 export default function CoffeeList() {
   const { coffees, loading, getStoreById } = useCoffeeData();
   const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [filters, setFilters] = useState({
     search: '',
     type: '',
@@ -22,13 +24,14 @@ export default function CoffeeList() {
   });
 
   const filteredCoffees = useMemo(() => {
-    return filterCoffees(coffees, {
+    const filtered = filterCoffees(coffees, {
       ...filters,
       minPrice: filters.minPrice ? Number(filters.minPrice) : null,
       maxPrice: filters.maxPrice ? Number(filters.maxPrice) : null,
       minRating: filters.minRating ? Number(filters.minRating) : null
     });
-  }, [coffees, filters]);
+    return sortCoffees(filtered, sortBy, sortOrder);
+  }, [coffees, filters, sortBy, sortOrder]);
 
   if (loading) {
     return (
@@ -61,30 +64,57 @@ export default function CoffeeList() {
             </p>
           </div>
           
-          {/* View Toggle */}
-          <div className="flex items-center gap-2 glass-card rounded-xl p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2.5 rounded-lg transition-all ${
-                viewMode === 'grid' 
-                  ? 'bg-coffee-dark text-white' 
-                  : 'text-coffee-roast hover:bg-coffee-cream/50'
-              }`}
-              title="Kartični prikaz"
-            >
-              <Grid3X3 className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2.5 rounded-lg transition-all ${
-                viewMode === 'list' 
-                  ? 'bg-coffee-dark text-white' 
-                  : 'text-coffee-roast hover:bg-coffee-cream/50'
-              }`}
-              title="Popis"
-            >
-              <List className="w-5 h-5" />
-            </button>
+          <div className="flex items-center gap-3">
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2 glass-card rounded-xl px-3 py-2">
+              <ArrowUpDown className="w-4 h-4 text-coffee-roast" />
+              <select
+                value={`${sortBy}-${sortOrder}`}
+                onChange={(e) => {
+                  const [newSortBy, newSortOrder] = e.target.value.split('-');
+                  setSortBy(newSortBy);
+                  setSortOrder(newSortOrder);
+                }}
+                className="bg-transparent border-none outline-none text-sm font-medium text-coffee-dark cursor-pointer"
+              >
+                <option value="date-desc">Najnovije</option>
+                <option value="date-asc">Najstarije</option>
+                <option value="price-asc">Cijena: najniža → najviša</option>
+                <option value="price-desc">Cijena: najviša → najniža</option>
+                <option value="rating-desc">Ocjena: najviša → najniža</option>
+                <option value="rating-asc">Ocjena: najniža → najviša</option>
+                <option value="name-asc">Naziv: A → Ž</option>
+                <option value="name-desc">Naziv: Ž → A</option>
+                <option value="brand-asc">Brend: A → Ž</option>
+                <option value="brand-desc">Brend: Ž → A</option>
+              </select>
+            </div>
+            
+            {/* View Toggle */}
+            <div className="flex items-center gap-2 glass-card rounded-xl p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2.5 rounded-lg transition-all ${
+                  viewMode === 'grid' 
+                    ? 'bg-coffee-dark text-white' 
+                    : 'text-coffee-roast hover:bg-coffee-cream/50'
+                }`}
+                title="Kartični prikaz"
+              >
+                <Grid3X3 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2.5 rounded-lg transition-all ${
+                  viewMode === 'list' 
+                    ? 'bg-coffee-dark text-white' 
+                    : 'text-coffee-roast hover:bg-coffee-cream/50'
+                }`}
+                title="Popis"
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </motion.div>
 

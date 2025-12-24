@@ -1,8 +1,18 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  ArrowLeft, Edit, Trash2, MapPin, Store, Calendar, 
-  TrendingUp, TrendingDown, Minus, Coffee, Share2, History
+  ArrowLeft, 
+  Edit, 
+  Trash2, 
+  MapPin, 
+  Store, 
+  Calendar, 
+  TrendingUp, 
+  TrendingDown, 
+  Minus, 
+  Coffee, 
+  Share2, 
+  History
 } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import { useAuth } from '../context/AuthContext';
@@ -10,14 +20,24 @@ import CoffeeBeanRating from '../components/CoffeeBeanRating';
 import PriceChart, { PriceByStoreChart } from '../components/PriceChart';
 import AddPriceEntry from '../components/AddPriceEntry';
 import PriceHistoryTable from '../components/PriceHistoryTable';
-import { formatPrice, formatDate, formatWeight, formatPricePerKg, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { 
+  formatPrice, 
+  formatDate, 
+  formatWeight, 
+  formatPricePerKg, 
+  calculatePriceChange, 
+  roastLevels, 
+  coffeeTypes, 
+  IMAGES_FOLDER,
+  calculateEspressoPrice
+} from '../utils/formatters';
 
 export default function CoffeeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { coffees, deleteCoffee, loading } = useCoffeeData();
+  const { coffees, deleteCoffee, loading, getStoreById } = useCoffeeData();
   const { isAdmin } = useAuth();
-
+ 
   const coffee = coffees.find(c => c.id === id);
 
   if (loading) {
@@ -52,9 +72,46 @@ export default function CoffeeDetail() {
     );
   }
 
+  // Pronađi najjeftiniju cijenu - za svaki dućan uzmi najnoviji unos, zatim najnižu cijenu
+  const getLowestPriceEntry = () => {
+    if (!coffee.priceHistory || coffee.priceHistory.length === 0) {
+      return null;
+    }
+
+    // Grupiraj unose po storeId
+    const entriesByStore = {};
+    coffee.priceHistory.forEach(entry => {
+      const storeId = entry.storeId || 'no-store';
+      if (!entriesByStore[storeId]) {
+        entriesByStore[storeId] = [];
+      }
+      entriesByStore[storeId].push(entry);
+    });
+
+    // Za svaki dućan uzmi najnoviji unos (sortiraj po datumu, najnoviji prvi)
+    const latestEntriesByStore = Object.entries(entriesByStore).map(([storeId, entries]) => {
+      const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+      return sorted[0]; // Najnoviji unos za taj dućan
+    });
+
+    // Pronađi najnižu cijenu među najnovijim unosima za svaki dućan
+    const lowestEntry = latestEntriesByStore.reduce((lowest, entry) => 
+      entry.price < lowest.price ? entry : lowest
+    );
+
+    return lowestEntry;
+  };
+
+  const lowestPriceEntry = getLowestPriceEntry();
+  const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
+  const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
+
   // Uspoređuj cijene samo iz glavnog dućana kave
   const priceChange = calculatePriceChange(coffee.priceHistory, coffee.storeId);
   const roastStyle = roastLevels[coffee.roast];
+  const espressoPrice10g = coffee.weightG
+    ? calculateEspressoPrice(displayPrice, coffee.weightG, 10)
+    : null;
 
   const handleDelete = () => {
     if (window.confirm(`Jeste li sigurni da želite obrisati "${coffee.name}"?`)) {
@@ -254,19 +311,36 @@ export default function CoffeeDetail() {
               {/* Price & Weight */}
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-sm text-coffee-roast mb-1">Trenutna cijena</p>
+                  <p className="text-sm text-coffee-roast mb-1">
+                    {lowestPriceEntry ? 'Najjeftinija cijena' : 'Trenutna cijena'}
+                  </p>
                   <span className="text-4xl font-bold text-coffee-dark">
-                    {formatPrice(coffee.priceEUR)}
+                    {formatPrice(displayPrice)}
                   </span>
+                  {lowestPriceEntry && lowestPriceStore && (
+                    <p className="text-xs text-coffee-roast mt-1">
+                      @ {lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})
+                    </p>
+                  )}
                   {coffee.weightG && (
-                    <div className="mt-2 flex items-center gap-3 text-sm">
-                      <span className="px-3 py-1 bg-coffee-cream/50 rounded-lg text-coffee-dark font-medium">
-                        {formatWeight(coffee.weightG)}
-                      </span>
-                      <span className="text-coffee-roast">
-                        {formatPricePerKg(coffee.priceEUR, coffee.weightG)}
-                      </span>
-                    </div>
+                    <>
+                      <div className="mt-3 flex items-center gap-4">
+                        <span className="px-5 py-2.5 bg-coffee-cream/60 rounded-xl text-coffee-dark font-bold text-base border-2 border-coffee-cream shadow-sm">
+                          {formatWeight(coffee.weightG)}
+                        </span>
+                        <span className="text-sm text-coffee-roast">
+                          {formatPricePerKg(displayPrice, coffee.weightG)}
+                        </span>
+                      </div>
+                      {espressoPrice10g !== null && (
+                        <p className="mt-2 text-sm text-coffee-roast">
+                          Cijena espressa (10 g):{' '}
+                          <span className="font-semibold text-coffee-dark">
+                            {formatPrice(espressoPrice10g)}
+                          </span>
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
                 

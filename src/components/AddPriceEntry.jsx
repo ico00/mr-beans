@@ -122,7 +122,7 @@ export default function AddPriceEntry({ coffeeId, onSuccess, onCancel }) {
                 required
               >
                 <option value="">Odaberi trgovinu</option>
-                {stores.map(store => (
+                {[...stores].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(store => (
                   <option key={store.id} value={store.id}>
                     {store.name}
                   </option>

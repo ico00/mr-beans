@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Store, Calendar, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Store, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, formatDate } from '../utils/formatters';
@@ -27,16 +27,6 @@ export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact
     } finally {
       setDeletingId(null);
     }
-  };
-
-  // Izračunaj promjenu cijene
-  const getPriceChange = (currentIndex) => {
-    if (currentIndex >= sortedHistory.length - 1) return null;
-    const current = sortedHistory[currentIndex].price;
-    const previous = sortedHistory[currentIndex + 1].price;
-    const change = current - previous;
-    const changePercent = ((change / previous) * 100).toFixed(1);
-    return { change, changePercent, isUp: change > 0, isDown: change < 0 };
   };
 
   if (priceHistory.length === 0) {
@@ -66,7 +56,6 @@ export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact
       <AnimatePresence mode="popLayout">
         {displayHistory.map((entry, index) => {
           const store = getStoreById(entry.storeId);
-          const priceChange = getPriceChange(index);
           
           return (
             <motion.div
@@ -75,7 +64,7 @@ export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ delay: index * 0.05 }}
-              className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
+              className={`relative flex items-center justify-between p-4 pr-14 rounded-xl border transition-colors ${
                 index === 0 
                   ? 'bg-gradient-to-r from-coffee-cream/50 to-white border-coffee-light' 
                   : 'bg-white border-neutral-200 hover:border-coffee-light/50'
@@ -102,51 +91,31 @@ export default function PriceHistoryTable({ coffeeId, priceHistory = [], compact
               </div>
 
               <div className="flex items-center gap-4">
-                {/* Promjena cijene */}
-                {priceChange && (
-                  <div className={`flex items-center gap-1 text-sm ${
-                    priceChange.isUp ? 'text-red-600' : priceChange.isDown ? 'text-green-600' : 'text-neutral-500'
-                  }`}>
-                    {priceChange.isUp ? (
-                      <TrendingUp className="w-4 h-4" />
-                    ) : priceChange.isDown ? (
-                      <TrendingDown className="w-4 h-4" />
-                    ) : (
-                      <Minus className="w-4 h-4" />
-                    )}
-                    <span className="font-medium">
-                      {priceChange.isUp ? '+' : ''}{priceChange.changePercent}%
-                    </span>
-                  </div>
-                )}
-
                 {/* Cijena */}
                 <div className={`text-lg font-bold ${index === 0 ? 'text-coffee-dark' : 'text-coffee-roast'}`}>
                   {formatPrice(entry.price)}
                 </div>
-
-                {/* Gumb za brisanje */}
-                {entry.id && isAdmin && (
-                  <div className="pl-2">
-                    <button
-                      onClick={() => handleDelete(entry.id)}
-                      disabled={deletingId === entry.id}
-                      className="p-2 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
-                      title="Obriši unos"
-                    >
-                      {deletingId === entry.id ? (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                          className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full"
-                        />
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                )}
               </div>
+
+              {/* Gumb za brisanje - fiksiran na 10px od desnog ruba */}
+              {entry.id && isAdmin && (
+                <button
+                  onClick={() => handleDelete(entry.id)}
+                  disabled={deletingId === entry.id}
+                  className="absolute right-[10px] top-1/2 -translate-y-1/2 p-2 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  title="Obriši unos"
+                >
+                  {deletingId === entry.id ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full"
+                    />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </button>
+              )}
             </motion.div>
           );
         })}

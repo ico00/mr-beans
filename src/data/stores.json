@@ -14,9 +14,9 @@
     },
     {
       "id": "3",
-      "name": "NajKava",
+      "name": "NajKava.com",
       "type": "Online trgovina",
-      "website": "https://www.najkava.com.hr"
+      "website": "https://www.najkava.com"
     },
     {
       "id": "4",
@@ -27,14 +27,14 @@
     {
       "id": "5",
       "name": "Svijet medija",
-      "type": "Online trgovina",
+      "type": "Trgovina",
       "website": "https://www.svijet-medija.hr"
     },
     {
       "id": "1766347164381",
       "name": "Nespresso",
       "type": "Trgovina",
-      "website": ""
+      "website": "https://www.nespresso.hr"
     }
   ]
 }

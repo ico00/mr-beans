@@ -3,6 +3,7 @@ import { CoffeeProvider } from './hooks/useCoffeeData';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navigation from './components/Navigation';
 import AdminLogin from './components/AdminLogin';
+import ErrorBoundary from './components/ErrorBoundary';
 import Landing from './pages/Landing';
 import CoffeeList from './pages/CoffeeList';
 import TableView from './pages/TableView';
@@ -41,11 +42,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <CoffeeProvider>
-        <AppContent />
-      </CoffeeProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <CoffeeProvider>
+          <AppContent />
+        </CoffeeProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

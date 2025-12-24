@@ -251,13 +251,13 @@ export default function CoffeeMap() {
                               />
                             ) : null}
                             {(!c.image || c.image === '') && (
-                              <Coffee size={20} className="text-coffee-primary" />
+                          <Coffee size={20} className="text-coffee-primary" />
                             )}
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="text-xs text-coffee-roast truncate">{c.brand?.name}</span>
                             <span className="font-bold text-coffee-dark truncate">{c.name}</span>
-                          </div>
+                        </div>
                         </Link>
                     ))}
                   </div>

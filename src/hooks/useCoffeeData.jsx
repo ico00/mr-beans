@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import toast from 'react-hot-toast';
 
 const CoffeeContext = createContext(null);
 
@@ -73,14 +74,18 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri dodavanju kave');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri dodavanju kave';
+        throw new Error(errorMessage);
       }
 
       const newCoffee = await response.json();
       setCoffees(prev => [...prev, newCoffee]);
+      toast.success(`Kava "${newCoffee.name}" uspješno dodana!`);
       return newCoffee;
     } catch (err) {
       console.error('Greška pri dodavanju kave:', err);
+      toast.error(err.message || 'Greška pri dodavanju kave');
       throw err;
     }
   };
@@ -95,16 +100,20 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri ažuriranju kave');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri ažuriranju kave';
+        throw new Error(errorMessage);
       }
 
       const updatedCoffee = await response.json();
       setCoffees(prev => prev.map(coffee => 
         coffee.id === id ? updatedCoffee : coffee
       ));
+      toast.success(`Kava "${updatedCoffee.name}" uspješno ažurirana!`);
       return updatedCoffee;
     } catch (err) {
       console.error('Greška pri ažuriranju kave:', err);
+      toast.error(err.message || 'Greška pri ažuriranju kave');
       throw err;
     }
   };
@@ -118,12 +127,18 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri brisanju kave');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri brisanju kave';
+        throw new Error(errorMessage);
       }
 
+      const result = await response.json();
+      const deletedCoffee = result.deleted || result;
       setCoffees(prev => prev.filter(coffee => coffee.id !== id));
+      toast.success(`Kava "${deletedCoffee.name || 'kava'}" uspješno obrisana!`);
     } catch (err) {
       console.error('Greška pri brisanju kave:', err);
+      toast.error(err.message || 'Greška pri brisanju kave');
       throw err;
     }
   };
@@ -138,16 +153,20 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri dodavanju cijene');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri dodavanju cijene';
+        throw new Error(errorMessage);
       }
 
       const updatedCoffee = await response.json();
       setCoffees(prev => prev.map(coffee => 
         coffee.id === coffeeId ? updatedCoffee : coffee
       ));
+      toast.success('Nova cijena uspješno dodana!');
       return updatedCoffee;
     } catch (err) {
       console.error('Greška pri dodavanju cijene:', err);
+      toast.error(err.message || 'Greška pri dodavanju cijene');
       throw err;
     }
   };
@@ -161,16 +180,20 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri brisanju cijene');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri brisanju cijene';
+        throw new Error(errorMessage);
       }
 
       const updatedCoffee = await response.json();
       setCoffees(prev => prev.map(coffee => 
         coffee.id === coffeeId ? updatedCoffee : coffee
       ));
+      toast.success('Cijena uspješno obrisana!');
       return updatedCoffee;
     } catch (err) {
       console.error('Greška pri brisanju cijene:', err);
+      toast.error(err.message || 'Greška pri brisanju cijene');
       throw err;
     }
   };
@@ -185,14 +208,18 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri dodavanju brenda');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri dodavanju brenda';
+        throw new Error(errorMessage);
       }
 
       const newBrand = await response.json();
       setBrands(prev => [...prev, newBrand]);
+      toast.success(`Brend "${newBrand.name}" uspješno dodan!`);
       return newBrand;
     } catch (err) {
       console.error('Greška pri dodavanju brenda:', err);
+      toast.error(err.message || 'Greška pri dodavanju brenda');
       throw err;
     }
   };
@@ -207,16 +234,20 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri ažuriranju brenda');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri ažuriranju brenda';
+        throw new Error(errorMessage);
       }
 
       const updatedBrand = await response.json();
       setBrands(prev => prev.map(brand => 
         brand.id === id ? updatedBrand : brand
       ));
+      toast.success(`Brend "${updatedBrand.name}" uspješno ažuriran!`);
       return updatedBrand;
     } catch (err) {
       console.error('Greška pri ažuriranju brenda:', err);
+      toast.error(err.message || 'Greška pri ažuriranju brenda');
       throw err;
     }
   };
@@ -231,14 +262,18 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri dodavanju trgovine');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri dodavanju trgovine';
+        throw new Error(errorMessage);
       }
 
       const newStore = await response.json();
       setStores(prev => [...prev, newStore]);
+      toast.success(`Trgovina "${newStore.name}" uspješno dodana!`);
       return newStore;
     } catch (err) {
       console.error('Greška pri dodavanju trgovine:', err);
+      toast.error(err.message || 'Greška pri dodavanju trgovine');
       throw err;
     }
   };
@@ -253,14 +288,18 @@ export function CoffeeProvider({ children }) {
       });
 
       if (!response.ok) {
-        throw new Error('Greška pri dodavanju države');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Greška pri dodavanju države';
+        throw new Error(errorMessage);
       }
 
       const newCountry = await response.json();
       setCountries(prev => [...prev, newCountry]);
+      toast.success(`Država "${newCountry.name}" uspješno dodana!`);
       return newCountry;
     } catch (err) {
       console.error('Greška pri dodavanju države:', err);
+      toast.error(err.message || 'Greška pri dodavanju države');
       throw err;
     }
   };

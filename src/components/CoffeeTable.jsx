@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronUp, ChevronDown, Eye, Edit, Trash2 } from 'lucide-react';
 import { CoffeeBeanRatingSmall } from './CoffeeBeanRating';
-import { formatPrice, formatDate, roastLevels } from '../utils/formatters';
+import { formatPrice, formatDate, formatWeight, roastLevels } from '../utils/formatters';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,6 +22,17 @@ export default function CoffeeTable({ coffees }) {
     }
   };
 
+  // Helper funkcija za dobivanje najniže cijene iz priceHistory
+  const getDisplayPrice = (coffee) => {
+    if (coffee.priceHistory && coffee.priceHistory.length > 0) {
+      const lowestPriceEntry = coffee.priceHistory.reduce((lowest, entry) => 
+        entry.price < lowest.price ? entry : lowest
+      );
+      return lowestPriceEntry.price;
+    }
+    return coffee.priceEUR || 0;
+  };
+
   const sortedCoffees = [...coffees].sort((a, b) => {
     let valueA, valueB;
     
@@ -35,16 +46,21 @@ export default function CoffeeTable({ coffees }) {
         valueB = b.brand?.name?.toLowerCase() || '';
         break;
       case 'price':
-        valueA = a.priceEUR;
-        valueB = b.priceEUR;
+        // Koristi najnižu cijenu iz priceHistory ako postoji, inače priceEUR
+        valueA = getDisplayPrice(a);
+        valueB = getDisplayPrice(b);
         break;
       case 'rating':
-        valueA = a.rating;
-        valueB = b.rating;
+        valueA = a.rating || 0;
+        valueB = b.rating || 0;
         break;
       case 'type':
         valueA = a.type;
         valueB = b.type;
+        break;
+      case 'weight':
+        valueA = a.weightG || 0;
+        valueB = b.weightG || 0;
         break;
       default:
         return 0;
@@ -106,6 +122,14 @@ export default function CoffeeTable({ coffees }) {
                 Vrsta <SortIcon column="type" />
               </span>
             </th>
+            <th 
+              className="cursor-pointer hover:bg-coffee-roast transition-colors whitespace-nowrap"
+              onClick={() => handleSort('weight')}
+            >
+              <span className="inline-flex items-center gap-1">
+                Težina <SortIcon column="weight" />
+              </span>
+            </th>
             <th className="whitespace-nowrap">Prženje</th>
             <th className="whitespace-nowrap">Arabica / Robusta</th>
             <th>Država</th>
@@ -144,6 +168,9 @@ export default function CoffeeTable({ coffees }) {
                 <span className="px-2 py-1 rounded-full text-xs bg-coffee-light/30 text-coffee-dark">
                   {coffee.type}
                 </span>
+              </td>
+              <td className="text-coffee-dark">
+                {coffee.weightG ? formatWeight(coffee.weightG) : '—'}
               </td>
               <td>
                 <span 
@@ -191,7 +218,7 @@ export default function CoffeeTable({ coffees }) {
               <td>{coffee.store?.name}</td>
               <td className="font-bold text-coffee-dark">{formatPrice(coffee.priceEUR)}</td>
               <td>
-                <CoffeeBeanRatingSmall rating={coffee.rating} size={18} />
+                <CoffeeBeanRatingSmall rating={coffee.rating} size={18} hideLabel />
               </td>
               <td>
                 <div className="flex items-center gap-1">

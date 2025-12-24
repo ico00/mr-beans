@@ -27,7 +27,8 @@ export default function CoffeeBeanRating({
   onChange, 
   readonly = false, 
   size = 24,
-  showLabel = false 
+  showLabel = false,
+  hideLabel = false
 }) {
   const handleClick = (value) => {
     if (!readonly && onChange) {
@@ -36,7 +37,10 @@ export default function CoffeeBeanRating({
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
+      {!hideLabel && (
+        <span className="text-xs text-coffee-roast font-medium">Ocjena:</span>
+      )}
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((value) => (
           <CoffeeBeanIcon
@@ -48,7 +52,7 @@ export default function CoffeeBeanRating({
         ))}
       </div>
       {showLabel && (
-        <span className="ml-2 text-sm text-coffee-roast font-medium">
+        <span className="ml-1 text-sm text-coffee-roast font-medium">
           {rating}/5
         </span>
       )}
@@ -57,9 +61,13 @@ export default function CoffeeBeanRating({
 }
 
 // Mala verzija za kartice i tablice - sa zrnima kave
-export function CoffeeBeanRatingSmall({ rating, size = 16 }) {
+export function CoffeeBeanRatingSmall({ rating, size = 16, hideLabel = false }) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1.5">
+      {!hideLabel && (
+        <span className="text-xs text-coffee-roast font-medium">Ocjena:</span>
+      )}
+      <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((value) => (
         <svg
           key={value}
@@ -74,6 +82,7 @@ export function CoffeeBeanRatingSmall({ rating, size = 16 }) {
           <path d="M12 4c-.5 0-1 .5-1 1v14c0 .5.5 1 1 1s1-.5 1-1V5c0-.5-.5-1-1-1z"/>
         </svg>
       ))}
+      </div>
     </div>
   );
 }

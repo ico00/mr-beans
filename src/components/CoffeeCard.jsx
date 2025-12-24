@@ -2,7 +2,17 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Store, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import CoffeeBeanRating from './CoffeeBeanRating';
-import { formatPrice, formatWeight, formatPricePerKg, formatDate, calculatePriceChange, roastLevels, coffeeTypes, IMAGES_FOLDER } from '../utils/formatters';
+import { 
+  formatPrice, 
+  formatWeight, 
+  formatPricePerKg, 
+  formatDate, 
+  calculatePriceChange, 
+  roastLevels, 
+  coffeeTypes, 
+  IMAGES_FOLDER,
+  calculateEspressoPrice
+} from '../utils/formatters';
 import { useCoffeeData } from '../hooks/useCoffeeData';
 
 export default function CoffeeCard({ coffee, index = 0 }) {
@@ -16,6 +26,11 @@ export default function CoffeeCard({ coffee, index = 0 }) {
     : null;
   const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
   const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
+  
+  // Cijena espressa (10 g) na temelju trenutne cijene pakiranja
+  const espressoPrice10g = coffee.weightG 
+    ? calculateEspressoPrice(displayPrice, coffee.weightG, 10)
+    : null;
   
   // Uspoređuj cijene samo iz glavnog dućana kave
   const priceChange = calculatePriceChange(coffee.priceHistory, coffee.storeId);
@@ -123,9 +138,16 @@ export default function CoffeeCard({ coffee, index = 0 }) {
                   {formatPrice(displayPrice)}
                 </span>
                 {coffee.weightG && (
+                  <>
                   <div className="text-xs text-coffee-roast">
                     {formatWeight(coffee.weightG)} • {formatPricePerKg(displayPrice, coffee.weightG)}
                   </div>
+                    {espressoPrice10g !== null && (
+                      <div className="text-xs text-coffee-roast mt-1">
+                        ≈ {formatPrice(espressoPrice10g)} po espressu (10 g)
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               

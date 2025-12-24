@@ -38,16 +38,16 @@ export default function TableView() {
         : (coffee.country?.name || '');
 
       return [
-        coffee.name,
-        coffee.brand?.name || '',
-        coffee.type,
-        coffee.roast,
-        coffee.arabicaPercentage,
-        coffee.robustaPercentage,
+      coffee.name,
+      coffee.brand?.name || '',
+      coffee.type,
+      coffee.roast,
+      coffee.arabicaPercentage,
+      coffee.robustaPercentage,
         countryNames,
-        coffee.store?.name || '',
-        coffee.priceEUR,
-        coffee.rating
+      coffee.store?.name || '',
+      coffee.priceEUR,
+      coffee.rating
       ];
     });
     

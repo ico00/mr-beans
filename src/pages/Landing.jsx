@@ -6,11 +6,13 @@ import { useAuth } from '../context/AuthContext';
 import CoffeeMap from '../components/CoffeeMap';
 import CoffeeMarketPrices from '../components/CoffeeMarketPrices';
 import { PriceComparisonChart } from '../components/PriceChart';
-import { CoffeeBeanRatingSmall } from '../components/CoffeeBeanRating';
+import CoffeeFunFacts from '../components/CoffeeFunFacts';
+import EspressoCalculator from '../components/EspressoCalculator';
+import CoffeeCard from '../components/CoffeeCard';
 import { formatPrice, formatDate, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/formatters';
 
 export default function Landing() {
-  const { coffees, stats, brands, loading, getStoreById } = useCoffeeData();
+  const { coffees, stats, brands, loading } = useCoffeeData();
   const { isAdmin, openLoginModal } = useAuth();
   
   // Na localhostu (development) omogući edit bez logiranja
@@ -34,7 +36,7 @@ export default function Landing() {
     const aId = parseInt(a.id) || 0;
     const bId = parseInt(b.id) || 0;
     return bId - aId;
-  }).slice(0, 3);
+  }).slice(0, 4);
 
   if (loading) {
     return (
@@ -94,12 +96,12 @@ export default function Landing() {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-6 text-white">
                 Pratite cijene kave
                 <br />
-                kao profesionalac
+                ...i počnite šparati
               </h1>
               
               <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Unesite, uspoređujte i analizirajte cijene vaših omiljenih kava. 
-                Vizualizirajte trendove i nikad više ne propustite dobru ponudu.
+                Usporedba i analiza meni dragih kava. 
+              
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -161,36 +163,64 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Live Market Prices Section */}
-      <section className="py-12 md:py-20 bg-gradient-to-b from-transparent to-coffee-cream/30">
+            {/* Recent Coffees Preview */}
+            <section className="py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between mb-10"
           >
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-4">
-              Live tržišne cijene
-            </h2>
-            <p className="text-coffee-roast max-w-2xl mx-auto">
-              Pratite aktualne burzovne cijene arabice i robuste u realnom vremenu.
-            </p>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-2">
+                Nedavno dodane kave
+              </h2>
+   
+            </div>
+            <Link 
+              to="/coffees"
+              className="hidden sm:flex items-center gap-2 text-coffee-dark font-semibold hover:text-coffee-roast transition-colors"
+            >
+              Pogledaj sve
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <CoffeeMarketPrices />
-          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {recentCoffees.length > 0 ? (
+              recentCoffees.map((coffee, index) => (
+                <CoffeeCard key={coffee.id} coffee={coffee} index={index} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-coffee-roast"> 
+                <p>Nema dodanih kava.</p>
+              </div>
+            )}
+          </div>
+          
+          <div className="mt-8 text-center sm:hidden">
+            <Link 
+              to="/coffees"
+              className="btn-secondary inline-flex items-center gap-2"
+            >
+              Pogledaj sve kave
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
+           {/* Espresso Calculator Section */}
+           <EspressoCalculator />
+
+          {/* Fun Facts Section */}
+          <CoffeeFunFacts />
+
+
+
       {/* Interactive Map Section */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-gradient-to-b from-transparent to-coffee-cream/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -219,7 +249,7 @@ export default function Landing() {
 
       {/* Price Chart Section */}
       {coffees.length > 1 && (
-        <section className="py-12 md:py-20 bg-coffee-cream/30">
+        <section className="py-12 md:py-20 bg-coffee-cream/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -231,7 +261,7 @@ export default function Landing() {
                 Usporedba cijena
               </h2>
               <p className="text-coffee-roast max-w-2xl mx-auto">
-                Usporedite kako su se cijene vaših omiljenih kava mijenjale kroz vrijeme.
+                Usporedite kako su se cijene mojih omiljenih kava mijenjale kroz vrijeme.
               </p>
             </motion.div>
             
@@ -247,146 +277,45 @@ export default function Landing() {
         </section>
       )}
 
-      {/* Recent Coffees Preview */}
-      <section className="py-12 md:py-20">
+       {/* Live Market Prices Section */}
+       <section className="py-12 md:py-20 bg-gradient-to-b from-transparent to-coffee-cream/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-between mb-10"
+            className="text-center mb-10"
           >
-            <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-2">
-                Nedavno dodane kave
-              </h2>
-              <p className="text-coffee-roast">
-                Najnovije kave u vašoj kolekciji
-              </p>
-            </div>
-            <Link 
-              to="/coffees"
-              className="hidden sm:flex items-center gap-2 text-coffee-dark font-semibold hover:text-coffee-roast transition-colors"
-            >
-              Pogledaj sve
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-4">
+              Live tržišne cijene
+            </h2>
+            <p className="text-coffee-roast max-w-2xl mx-auto">
+              Pratite aktualne burzovne cijene arabice i robuste u (ne tako) realnom vremenu.
+            </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentCoffees.length > 0 ? (
-              recentCoffees.map((coffee, index) => {
-                // Pronađi najnižu cijenu iz priceHistory
-                const lowestPriceEntry = coffee.priceHistory && coffee.priceHistory.length > 0
-                  ? coffee.priceHistory.reduce((lowest, entry) => 
-                      entry.price < lowest.price ? entry : lowest
-                    )
-                  : null;
-                const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
-                const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
-                
-                return (
-              <motion.div
-                key={coffee.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link to={`/coffee/${coffee.id}`}>
-                  <div className="coffee-card glass-card rounded-2xl p-6 h-full">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-24 flex items-center justify-center overflow-hidden">
-                        {coffee.image ? (
-                          <img 
-                            src={coffee.image.startsWith('http') ? coffee.image : `${IMAGES_FOLDER}${coffee.image}`}
-                            alt={coffee.name}
-                            className="w-full h-auto object-contain"
-                          />
-                        ) : (
-                          <Coffee className="w-8 h-8 text-coffee-dark" />
-                        )}
-                      </div>
-                      <span className="px-3 py-1 bg-coffee-light/30 rounded-full text-xs font-semibold text-coffee-dark">
-                        {coffee.type}
-                      </span>
-                    </div>
-                    
-                    <p className="text-sm text-coffee-roast mb-1">{coffee.brand?.name}</p>
-                    <h3 className="text-xl font-display font-bold text-coffee-dark mb-3">
-                      {coffee.name}
-                    </h3>
-                    
-                    <div className="flex items-center gap-2 mb-4 flex-wrap">
-                      {coffee.countries?.length > 0 ? (
-                        coffee.countries.map((country, idx) => (
-                          <span key={country.id} className="flex items-center gap-1 text-sm text-coffee-roast">
-                            <span className="text-lg">{country.flag}</span>
-                            <span>{country.name}</span>
-                            {idx < coffee.countries.length - 1 && (
-                              <span className="text-neutral-300 mx-1">/</span>
-                            )}
-                          </span>
-                        ))
-                      ) : coffee.country ? (
-                        <>
-                          <span className="text-lg">{coffee.country.flag}</span>
-                          <span className="text-sm text-coffee-roast">{coffee.country.name}</span>
-                        </>
-                      ) : null}
-                    </div>
-                    
-                    {/* Težina i dućan s najnižom cijenom */}
-                    <div className="flex items-center gap-4 mb-4 text-sm text-coffee-roast">
-                      {coffee.weightG && (
-                        <span>{coffee.weightG >= 1000 ? `${(coffee.weightG / 1000).toFixed(coffee.weightG % 1000 === 0 ? 0 : 1)}kg` : `${coffee.weightG}g`}</span>
-                      )}
-                      {lowestPriceStore && lowestPriceEntry && (
-                        <span className="font-semibold text-coffee-dark">
-                          {lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-4 border-t border-neutral-200">
-                      <span className="text-2xl font-bold text-coffee-dark">
-                        {formatPrice(displayPrice)}
-                      </span>
-                      <CoffeeBeanRatingSmall rating={coffee.rating} />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-              );
-              })
-            ) : (
-              <div className="col-span-full text-center py-12 text-coffee-roast">
-                <p>Nema dodanih kava.</p>
-              </div>
-            )}
-          </div>
-          
-          <div className="mt-8 text-center sm:hidden">
-            <Link 
-              to="/coffees"
-              className="btn-secondary inline-flex items-center gap-2"
-            >
-              Pogledaj sve kave
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <CoffeeMarketPrices />
+          </motion.div>
         </div>
       </section>
+
+
 
       {/* Brands Section */}
       <section className="py-12 md:py-20 bg-coffee-cream/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-4">
-              Naši brendovi
+              Kaj se pije?
             </h2>
             <p className="text-coffee-roast max-w-2xl mx-auto">
-              Pratimo cijene kava od vodećih proizvođača kave diljem svijeta.
+              Brandovi kojima sam odlučio pokloniti svoje novce.
             </p>
           </div>
           

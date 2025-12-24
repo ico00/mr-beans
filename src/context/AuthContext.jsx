@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import toast from 'react-hot-toast'
 
 // API URL
 const API_URL = import.meta.env.VITE_API_URL || '/api'
@@ -71,6 +72,7 @@ export function AuthProvider({ children, onAuthChange }) {
     localStorage.removeItem('adminToken')
     setAdminToken(null)
     setIsAdmin(false)
+    toast.success('Uspješno odjavljen')
     console.log('🔓 Admin odjavljen')
   }, [])
 

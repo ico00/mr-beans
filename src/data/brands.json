@@ -3,7 +3,7 @@
     { "id": "1", "name": "Lavazza", "country": "Italija", "founded": 1895, "logo": "lavazza.svg" },
     { "id": "2", "name": "Illy", "country": "Italija", "founded": 1933, "logo": "illy.svg" },
     { "id": "3", "name": "Franck", "country": "Hrvatska", "founded": 1892, "logo": "franck.png" },
-    { "id": "4", "name": "Nespresso", "country": "Švicarska", "founded": 1986, "logo": "nespresso.svg" },
+    { "id": "4", "name": "Nespresso", "country": "Švicarska", "founded": 1986, "logo": "nespresso.svg"},
     { "id": "5", "name": "Julius Meinl", "country": "Austrija", "founded": 1862, "logo": "julius_meinl.svg" },
     { "id": "6", "name": "Barcaffe", "country": "Slovenija", "founded": 1862, "logo": "barcaffe.svg" },
     { "id": "7", "name": "Starbucks", "country": "SAD", "founded": 1862, "logo": "starbucks.svg" }

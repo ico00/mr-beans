@@ -41,6 +41,19 @@ export function calculatePricePerKg(priceEUR, weightG) {
   return (priceEUR / weightG) * 1000;
 }
 
+// Izračun cijene po jednom gramu
+export function calculatePricePerGram(priceEUR, weightG) {
+  if (!priceEUR || !weightG || weightG === 0) return null;
+  return priceEUR / weightG;
+}
+
+// Izračun cijene jednog espressa (default 10 g)
+export function calculateEspressoPrice(priceEUR, weightG, gramsPerShot = 10) {
+  const pricePerGram = calculatePricePerGram(priceEUR, weightG);
+  if (pricePerGram === null || !gramsPerShot || gramsPerShot <= 0) return null;
+  return pricePerGram * gramsPerShot;
+}
+
 // Formatiranje cijene po kg
 export function formatPricePerKg(priceEUR, weightG) {
   const pricePerKg = calculatePricePerKg(priceEUR, weightG);
@@ -108,10 +121,21 @@ export const coffeeTypes = {
 
 // Razine prženja na hrvatski
 export const roastLevels = {
-  'Blonde': { label: 'Blonde (svijetlo)', color: '#D4A574' },
+  'Light': { label: 'Light (svijetlo)', color: '#D4A574' },
   'Medium': { label: 'Medium (srednje)', color: '#8B6914' },
   'Dark': { label: 'Dark (tamno)', color: '#3C2415' }
 };
+
+// Helper funkcija za dobivanje najniže cijene iz priceHistory
+function getDisplayPrice(coffee) {
+  if (coffee.priceHistory && coffee.priceHistory.length > 0) {
+    const lowestPriceEntry = coffee.priceHistory.reduce((lowest, entry) => 
+      entry.price < lowest.price ? entry : lowest
+    );
+    return lowestPriceEntry.price;
+  }
+  return coffee.priceEUR || 0;
+}
 
 // Sortiranje funkcije
 export function sortCoffees(coffees, sortBy, sortOrder = 'asc') {
@@ -124,20 +148,21 @@ export function sortCoffees(coffees, sortBy, sortOrder = 'asc') {
         valueB = b.name.toLowerCase();
         break;
       case 'price':
-        valueA = a.priceEUR;
-        valueB = b.priceEUR;
+        // Koristi najnižu cijenu iz priceHistory ako postoji, inače priceEUR
+        valueA = getDisplayPrice(a);
+        valueB = getDisplayPrice(b);
         break;
       case 'rating':
-        valueA = a.rating;
-        valueB = b.rating;
+        valueA = a.rating || 0;
+        valueB = b.rating || 0;
         break;
       case 'brand':
         valueA = a.brand?.name?.toLowerCase() || '';
         valueB = b.brand?.name?.toLowerCase() || '';
         break;
       case 'date':
-        valueA = new Date(a.createdAt);
-        valueB = new Date(b.createdAt);
+        valueA = new Date(a.createdAt || 0);
+        valueB = new Date(b.createdAt || 0);
         break;
       default:
         return 0;
