@@ -2,7 +2,10 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import toast from 'react-hot-toast'
 
 // API URL
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+// U produkciji, frontend i backend su na istoj domeni, pa koristimo relativni path
+const API_URL = import.meta.env.PROD 
+  ? '/api' 
+  : (import.meta.env.VITE_API_URL || '/api')
 
 // Kreiraj context
 const AuthContext = createContext(null)

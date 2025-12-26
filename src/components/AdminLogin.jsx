@@ -2,7 +2,10 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 // Koristi relativni /api u produkciji; u developmentu se može postaviti VITE_API_URL
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// U produkciji, frontend i backend su na istoj domeni, pa koristimo relativni path
+const API_URL = import.meta.env.PROD 
+  ? '/api' 
+  : (import.meta.env.VITE_API_URL || '/api');
 
 function AdminLogin({ isOpen, onClose, onLogin }) {
     const [password, setPassword] = useState('');

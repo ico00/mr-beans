@@ -36,7 +36,9 @@ const helmetConfig = helmet({
       connectSrc: [
         "'self'",
         "https://query1.finance.yahoo.com", // Za market prices API
-        "https://api.investing.com" // Za market prices API (ako se koristi)
+        "https://api.investing.com", // Za market prices API (ako se koristi)
+        // U developmentu, dozvoli localhost za Vite HMR
+        ...(NODE_ENV === 'development' ? ["http://localhost:3001", "ws://localhost:5173"] : [])
       ],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
