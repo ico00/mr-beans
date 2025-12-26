@@ -97,7 +97,8 @@ export function AuthProvider({ children, onAuthChange }) {
   useEffect(() => {
     const checkExistingToken = async () => {
       // Na localhostu (development) automatski omogući admin ovlasti
-      const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost'
+      // U produkciji, import.meta.env.PROD će biti true
+      const isDevelopment = !import.meta.env.PROD && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       
       if (isDevelopment) {
         console.log('🔓 Development mode: automatski admin ovlasti omogućene')
