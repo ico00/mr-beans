@@ -16,7 +16,8 @@ export default function Landing() {
   const { isAdmin, openLoginModal } = useAuth();
   
   // Na localhostu (development) omogući edit bez logiranja
-  const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost';
+  // U produkciji, import.meta.env.PROD će biti true
+  const isDevelopment = !import.meta.env.PROD && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   const canEdit = isDevelopment || isAdmin;
   
   // Sortiraj kave po datumu dodavanja (najnovije prvo)
@@ -117,7 +118,7 @@ export default function Landing() {
                 ) : (
                   <button
                     onClick={openLoginModal}
-                    className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white/60 border-2 border-white/20 px-8 py-4 rounded-xl font-semibold cursor-not-allowed opacity-50 text-lg"
+                    className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white/60 border-2 border-white/20 px-8 py-4 rounded-xl font-semibold hover:bg-white/15 transition-all opacity-60 text-lg"
                     title="Prijavi se kao admin da dodaješ kave"
                   >
                     <Plus className="w-5 h-5" />
