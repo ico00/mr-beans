@@ -30,7 +30,8 @@ const helmetConfig = helmet({
         "'self'",
         "data:",
         "blob:",
-        "https:" // Dozvoli slike s bilo kojeg HTTPS izvora
+        "https:", // Dozvoli slike s bilo kojeg HTTPS izvora
+        "http:" // Dozvoli i HTTP za development
       ],
       connectSrc: [
         "'self'",

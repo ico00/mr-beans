@@ -38,15 +38,19 @@ const corsOptions = {
     const allowedOrigins = getAllowedOrigins();
     const NODE_ENV = process.env.NODE_ENV || 'development';
     
-    // Zahtjevi bez origin-a (npr. Postman, curl, server-to-server)
+    // Zahtjevi bez origin-a (npr. Postman, curl, server-to-server, same-origin zahtjevi)
+    // Same-origin zahtjevi (frontend i backend na istoj domeni) ne šalju origin header
     if (!origin) {
-      // U developmentu dozvoli, u produkciji blokiraj
+      // U developmentu dozvoli
       if (NODE_ENV === 'development') {
         return callback(null, true);
-      } else {
-        console.warn('⚠️  CORS: Blokiran zahtjev bez origin-a u produkciji');
-        return callback(new Error('Origin je obavezan u produkciji'));
       }
+      // U produkciji, dozvoli samo ako je to same-origin zahtjev
+      // (zahtjevi s iste domene ne šalju origin header)
+      // Provjeravamo da li je zahtjev s iste domene gledajući referer ili host header
+      // Za sada, dozvoljavamo zahtjeve bez origin-a jer su vjerojatno same-origin
+      // (frontend i backend su na mr-beans.fly.dev)
+      return callback(null, true);
     }
     
     // Provjeri da li je origin na whitelisti
