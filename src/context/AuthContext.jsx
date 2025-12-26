@@ -1,11 +1,29 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import toast from 'react-hot-toast'
 
-// API URL
-// U produkciji, frontend i backend su na istoj domeni, pa koristimo relativni path
-const API_URL = import.meta.env.PROD 
-  ? '/api' 
-  : (import.meta.env.VITE_API_URL || '/api')
+// Funkcija za određivanje API URL-a na runtime
+// U produkciji (na fly.dev), frontend i backend su na istoj domeni, pa koristimo relativni path
+// U developmentu, koristimo VITE_API_URL ili localhost
+const getApiUrl = () => {
+  // Ako je postavljen VITE_API_URL, koristi ga (za development)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // Provjeri da li smo na localhostu (development)
+  const isLocalhost = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || 
+     window.location.hostname === '127.0.0.1');
+  
+  if (isLocalhost) {
+    return 'http://localhost:3001/api';
+  }
+  
+  // U produkciji, koristi relativni path (frontend i backend su na istoj domeni)
+  return '/api';
+};
+
+const API_URL = getApiUrl();
 
 // Kreiraj context
 const AuthContext = createContext(null)
