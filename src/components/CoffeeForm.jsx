@@ -11,7 +11,10 @@ const LOGOS_FOLDER = '/images/brands/';
 
 export default function CoffeeForm({ initialData = null, onSuccess, onCancel }) {
   const { brands, stores, countries, addCoffee, updateCoffee, addBrand, updateBrand, addStore, addCountry } = useCoffeeData();
-  const { getAuthHeaders } = useAuth();
+  const { getAuthHeaders, isAdmin } = useAuth();
+  
+  // Disable sva polja ako korisnik nije admin
+  const isReadOnly = !isAdmin;
   
   // Helper za upload slike (sada koristi auth headers)
 const uploadImage = async (file, type = 'coffee') => {
@@ -278,6 +281,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 className="form-input"
                 placeholder="Naziv novog brenda"
                 autoFocus
+                disabled={isReadOnly}
               />
               
               {/* Logo upload for new brand */}
@@ -321,7 +325,7 @@ const uploadImage = async (file, type = 'coffee') => {
                   accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
                   onChange={handleLogoSelect}
                   className="hidden"
-                  disabled={uploadingLogo}
+                  disabled={uploadingLogo || isReadOnly}
                 />
                 <p className="text-xs text-coffee-roast mt-1">
                   PNG, JPG, SVG do 2MB • Spremit će se u {LOGOS_FOLDER}
@@ -329,11 +333,11 @@ const uploadImage = async (file, type = 'coffee') => {
               </div>
               
               <div className="flex gap-2">
-                <button type="button" onClick={handleAddBrand} className="btn-primary flex-1 flex items-center justify-center gap-2">
+                <button type="button" onClick={handleAddBrand} className="btn-primary flex-1 flex items-center justify-center gap-2" disabled={isReadOnly}>
                   <Plus className="w-5 h-5" />
                   Dodaj brend
                 </button>
-                <button type="button" onClick={() => setShowNewBrand(false)} className="btn-secondary px-4">
+                <button type="button" onClick={() => setShowNewBrand(false)} className="btn-secondary px-4" disabled={isReadOnly}>
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -345,6 +349,7 @@ const uploadImage = async (file, type = 'coffee') => {
                   value={formData.brandId}
                   onChange={(e) => handleChange('brandId', e.target.value)}
                   className={`form-input ${errors.brandId ? 'border-error' : ''}`}
+                  disabled={isReadOnly}
                 >
                   <option value="">Odaberi brend</option>
                   {[...brands].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(brand => (
@@ -355,6 +360,7 @@ const uploadImage = async (file, type = 'coffee') => {
                   type="button" 
                   onClick={() => setShowNewBrand(true)}
                   className="btn-secondary px-4 whitespace-nowrap"
+                  disabled={isReadOnly}
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -397,6 +403,7 @@ const uploadImage = async (file, type = 'coffee') => {
             onChange={(e) => handleChange('name', e.target.value)}
             className={`form-input ${errors.name ? 'border-error' : ''}`}
             placeholder="npr. Qualità Oro"
+            disabled={isReadOnly}
           />
           {errors.name && <p className="text-error text-sm mt-1">{errors.name}</p>}
         </div>
@@ -409,6 +416,7 @@ const uploadImage = async (file, type = 'coffee') => {
               value={formData.type}
               onChange={(e) => handleChange('type', e.target.value)}
               className="form-input"
+              disabled={isReadOnly}
             >
               {coffeeTypes.map(type => (
                 <option key={type} value={type}>{type}</option>
@@ -422,6 +430,7 @@ const uploadImage = async (file, type = 'coffee') => {
               value={formData.roast}
               onChange={(e) => handleChange('roast', e.target.value)}
               className="form-input"
+              disabled={isReadOnly}
             >
               {roastTypes.map(roast => (
                 <option key={roast} value={roast}>{roast}</option>
@@ -450,9 +459,11 @@ const uploadImage = async (file, type = 'coffee') => {
                   value={formData.arabicaPercentage}
                   onChange={(e) => handleChange('arabicaPercentage', e.target.value)}
                   className="w-full h-3 bg-neutral-200 rounded-full appearance-none cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed
                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 
                     [&::-webkit-slider-thumb]:bg-coffee-dark [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
                     [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-lg"
+                  disabled={isReadOnly}
                 />
                 
                 {/* Step indicators */}
@@ -514,6 +525,7 @@ const uploadImage = async (file, type = 'coffee') => {
                       type="button"
                       onClick={() => toggleCountry(countryId)}
                       className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                      disabled={isReadOnly}
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -533,11 +545,12 @@ const uploadImage = async (file, type = 'coffee') => {
                 className="form-input"
                 placeholder="Nova država"
                 autoFocus
+                disabled={isReadOnly}
               />
-              <button type="button" onClick={handleAddCountry} className="btn-primary px-4">
+              <button type="button" onClick={handleAddCountry} className="btn-primary px-4" disabled={isReadOnly}>
                 <Plus className="w-5 h-5" />
               </button>
-              <button type="button" onClick={() => setShowNewCountry(false)} className="btn-secondary px-4">
+              <button type="button" onClick={() => setShowNewCountry(false)} className="btn-secondary px-4" disabled={isReadOnly}>
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -547,6 +560,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 type="button" 
                 onClick={() => setShowNewCountry(true)}
                 className="btn-secondary text-sm flex items-center gap-2"
+                disabled={isReadOnly}
               >
                 <Plus className="w-4 h-4" />
                 Dodaj novu državu
@@ -565,6 +579,7 @@ const uploadImage = async (file, type = 'coffee') => {
                   key={country.id}
                   type="button"
                   onClick={() => toggleCountry(country.id)}
+                  disabled={isReadOnly}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
                     isSelected
                       ? 'bg-coffee-dark text-white shadow-md'
@@ -593,11 +608,12 @@ const uploadImage = async (file, type = 'coffee') => {
                 className="form-input"
                 placeholder="Nova trgovina"
                 autoFocus
+                disabled={isReadOnly}
               />
-              <button type="button" onClick={handleAddStore} className="btn-primary px-4">
+              <button type="button" onClick={handleAddStore} className="btn-primary px-4" disabled={isReadOnly}>
                 <Plus className="w-5 h-5" />
               </button>
-              <button type="button" onClick={() => setShowNewStore(false)} className="btn-secondary px-4">
+              <button type="button" onClick={() => setShowNewStore(false)} className="btn-secondary px-4" disabled={isReadOnly}>
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -607,6 +623,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 value={formData.storeId}
                 onChange={(e) => handleChange('storeId', e.target.value)}
                 className={`form-input ${errors.storeId ? 'border-error' : ''}`}
+                disabled={isReadOnly}
               >
                 <option value="">Odaberi trgovinu</option>
                 {[...stores].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(store => (
@@ -617,6 +634,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 type="button" 
                 onClick={() => setShowNewStore(true)}
                 className="btn-secondary px-4 whitespace-nowrap"
+                disabled={isReadOnly}
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -638,6 +656,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 onChange={(e) => handleChange('priceEUR', e.target.value)}
                 className={`form-input pr-12 ${errors.priceEUR ? 'border-error' : ''}`}
                 placeholder="0.00"
+                disabled={isReadOnly}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-coffee-roast font-medium">
                 €
@@ -657,6 +676,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 onChange={(e) => handleChange('weightG', e.target.value)}
                 className="form-input pr-12"
                 placeholder="npr. 1000"
+                disabled={isReadOnly}
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-coffee-roast font-medium">
                 g
@@ -681,6 +701,7 @@ const uploadImage = async (file, type = 'coffee') => {
             size={32}
             showLabel
             hideLabel
+            readonly={isReadOnly}
           />
         </div>
 
@@ -704,6 +725,7 @@ const uploadImage = async (file, type = 'coffee') => {
             <button
               type="button"
               onClick={() => setImageInputType('upload')}
+              disabled={isReadOnly}
               className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                 imageInputType === 'upload'
                   ? 'bg-coffee-dark text-white'
@@ -722,6 +744,7 @@ const uploadImage = async (file, type = 'coffee') => {
                 onChange={(e) => handleChange('image', e.target.value)}
                 className="form-input"
                 placeholder="npr. lavazza-oro.jpg"
+                disabled={isReadOnly}
               />
               <p className="text-xs text-coffee-roast mt-1">
                 Slika mora biti u folderu: <code className="bg-neutral-200 px-1 rounded">{IMAGES_FOLDER}</code>
@@ -796,6 +819,7 @@ const uploadImage = async (file, type = 'coffee') => {
                   type="button"
                   onClick={() => handleChange('image', '')}
                   className="p-2 rounded-lg hover:bg-white/50 text-coffee-roast"
+                  disabled={isReadOnly}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -806,7 +830,7 @@ const uploadImage = async (file, type = 'coffee') => {
 
         {/* Actions */}
         <div className="flex gap-4 pt-4">
-          <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2">
+          <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2" disabled={isReadOnly}>
             <Save className="w-5 h-5" />
             {initialData ? 'Spremi promjene' : 'Dodaj kavu'}
           </button>

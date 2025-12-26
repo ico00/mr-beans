@@ -154,10 +154,20 @@ export function AuthProvider({ children, onAuthChange }) {
         return
       }
       
-      // U produkciji provjeri token
+      // U produkciji provjeri token - bez tokena nema admin pristupa
       const token = localStorage.getItem('adminToken')
       if (token) {
-        await verifyToken(token)
+        const isValid = await verifyToken(token)
+        if (!isValid) {
+          // Token nije validan, ukloni ga i onemogući admin
+          localStorage.removeItem('adminToken')
+          setIsAdmin(false)
+          setAdminToken(null)
+        }
+      } else {
+        // Nema tokena u produkciji = nema admin pristupa
+        setIsAdmin(false)
+        setAdminToken(null)
       }
       setLoading(false)
     }
