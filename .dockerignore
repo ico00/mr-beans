@@ -13,6 +13,13 @@
 **/dist-ssr
 **/*.local
 
+# Environment variables - ne kopiraj .env fajlove u Docker build
+.env
+.env.local
+.env.production
+.env.development
+.env*
+
 # Editor directories and files
 **/.vscode/*
 !**/.vscode/extensions.json
