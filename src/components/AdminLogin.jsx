@@ -1,29 +1,8 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-// Funkcija za određivanje API URL-a na runtime
-// U produkciji (na fly.dev), frontend i backend su na istoj domeni, pa koristimo relativni path
-// U developmentu, koristimo VITE_API_URL ili localhost
-const getApiUrl = () => {
-  // Ako je postavljen VITE_API_URL, koristi ga (za development)
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  
-  // Provjeri da li smo na localhostu (development)
-  const isLocalhost = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || 
-     window.location.hostname === '127.0.0.1');
-  
-  if (isLocalhost) {
-    return 'http://localhost:3001/api';
-  }
-  
-  // U produkciji, koristi relativni path (frontend i backend su na istoj domeni)
-  return '/api';
-};
-
-const API_URL = getApiUrl();
+// Koristi relativni /api u produkciji; u developmentu se može postaviti VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 function AdminLogin({ isOpen, onClose, onLogin }) {
     const [password, setPassword] = useState('');
