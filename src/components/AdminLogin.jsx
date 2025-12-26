@@ -15,26 +15,64 @@ function AdminLogin({ isOpen, onClose, onLogin }) {
         setLoading(true);
 
         try {
+            // Kreiraj AbortController za timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 sekundi timeout
+
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
+                body: JSON.stringify({ password }),
+                signal: controller.signal
             });
 
-            // Provjeri da li je response ok prije nego što pokušaš parsirati JSON
+            clearTimeout(timeoutId);
+
+            // Provjeri Content-Type prije parsiranja JSON-a
+            const contentType = response.headers.get('content-type');
+            const isJson = contentType && contentType.includes('application/json');
+
+            // Ako response nije OK, pokušaj parsirati error poruku
             if (!response.ok) {
-                // Ako je status 404 ili 500, server možda nije pokrenut
-                if (response.status === 404 || response.status >= 500) {
-                    const errorMsg = 'Server nije dostupan. Provjerite da li je backend server pokrenut.';
-                    setError(errorMsg);
-                    toast.error(errorMsg);
-                    return;
+                let errorMessage = 'Pogrešna lozinka';
+                
+                // Pokušaj parsirati JSON error ako postoji
+                if (isJson) {
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error?.message || errorMessage;
+                        
+                        // Provjeri da li je rate limit greška
+                        if (response.status === 429) {
+                            errorMessage = errorData.message || 'Previše pokušaja prijave. Pokušajte ponovno za 15 minuta.';
+                        }
+                    } catch (parseError) {
+                        console.error('Greška pri parsiranju error response:', parseError);
+                    }
+                } else {
+                    // Ako nije JSON, provjeri status kod
+                    if (response.status === 404) {
+                        errorMessage = 'API endpoint nije pronađen. Provjerite konfiguraciju servera.';
+                    } else if (response.status >= 500) {
+                        errorMessage = 'Greška na serveru. Molimo pokušajte ponovno kasnije.';
+                    } else if (response.status === 429) {
+                        errorMessage = 'Previše pokušaja prijave. Pokušajte ponovno za 15 minuta.';
+                    }
                 }
+                
+                setError(errorMessage);
+                toast.error(errorMessage);
+                return;
+            }
+
+            // Ako je response OK, parsiraj JSON
+            if (!isJson) {
+                throw new Error('Server je vratio neispravan format odgovora (očekivan JSON)');
             }
 
             const data = await response.json();
 
-            if (response.ok && data.success) {
+            if (data.success) {
                 // Sačuvaj token u localStorage
                 localStorage.setItem('adminToken', data.token);
                 setPassword('');
@@ -49,17 +87,26 @@ function AdminLogin({ isOpen, onClose, onLogin }) {
         } catch (err) {
             // Detaljnija greška ovisno o tipu problema
             let errorMsg = '';
-            if (err.name === 'TypeError' && (err.message.includes('fetch') || err.message.includes('Failed'))) {
-                errorMsg = `Nije moguće povezati se sa serverom (${API_URL}). Provjerite da li je backend server pokrenut.`;
+            
+            if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+                errorMsg = 'Zahtjev je prekoračio vrijeme čekanja. Provjerite internetsku vezu.';
+            } else if (err.name === 'TypeError' && (err.message.includes('fetch') || err.message.includes('Failed') || err.message.includes('NetworkError'))) {
+                errorMsg = `Nije moguće povezati se sa serverom (${API_URL}). Provjerite da li je backend server pokrenut i dostupan.`;
             } else if (err.name === 'SyntaxError') {
                 errorMsg = 'Server je vratio neispravan odgovor. Provjerite da li je backend server ispravno konfiguriran.';
             } else {
                 errorMsg = `Greška pri povezivanju sa serverom: ${err.message}`;
             }
+            
             setError(errorMsg);
             toast.error(errorMsg);
             console.error('Login error:', err);
             console.error('API URL:', API_URL);
+            console.error('Error details:', {
+                name: err.name,
+                message: err.message,
+                stack: err.stack
+            });
         } finally {
             setLoading(false);
         }
