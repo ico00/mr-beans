@@ -104,14 +104,13 @@ export default function CoffeeCard({ coffee, index = 0 }) {
               ) : null}
             </div>
             
-            <div className="flex items-center gap-1 text-sm text-coffee-roast mb-4">
-              <Store className="w-4 h-4" />
-              {lowestPriceStore && lowestPriceEntry ? (
+            {/* Store info - prikaži samo ako postoji price history entry */}
+            {lowestPriceStore && lowestPriceEntry && (
+              <div className="flex items-center gap-1 text-sm text-coffee-roast mb-4">
+                <Store className="w-4 h-4" />
                 <span>{lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})</span>
-              ) : (
-                <span>{coffee.store?.name}</span>
-              )}
-            </div>
+              </div>
+            )}
             
             {/* Arabica/Robusta */}
             <div className="mb-4">
