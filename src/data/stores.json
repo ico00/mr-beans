@@ -31,10 +31,26 @@
       "website": "https://www.svijet-medija.hr"
     },
     {
-      "id": "1766347164381",
+      "id": "6",
       "name": "Nespresso",
       "type": "Trgovina",
       "website": "https://www.nespresso.hr"
+    },
+
+    {
+      "id": "7",
+      "name": "Pevex",
+      "type": "Trgovina",
+      "website": "https://www.pevex.hr"
+    },
+
+    {
+      "id": "8",
+      "name": "Muller",
+      "type": "Trgovina",
+      "website": "https://www.muller.hr"
     }
+
+    
   ]
 }

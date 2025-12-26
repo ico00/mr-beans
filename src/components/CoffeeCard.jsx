@@ -19,11 +19,37 @@ export default function CoffeeCard({ coffee, index = 0 }) {
   const { getStoreById } = useCoffeeData();
   
   // Pronađi najnižu cijenu iz priceHistory
-  const lowestPriceEntry = coffee.priceHistory && coffee.priceHistory.length > 0
-    ? coffee.priceHistory.reduce((lowest, entry) => 
-        entry.price < lowest.price ? entry : lowest
-      )
-    : null;
+  // VAŽNO: Za svaki store uzmi najnoviju cijenu, zatim od tih najnovijih cijena uzmi najnižu
+  const getLowestPriceEntry = () => {
+    if (!coffee.priceHistory || coffee.priceHistory.length === 0) {
+      return null;
+    }
+
+    // Grupiraj unose po storeId
+    const entriesByStore = {};
+    coffee.priceHistory.forEach(entry => {
+      const storeId = entry.storeId || 'no-store';
+      if (!entriesByStore[storeId]) {
+        entriesByStore[storeId] = [];
+      }
+      entriesByStore[storeId].push(entry);
+    });
+
+    // Za svaki dućan uzmi najnoviji unos (sortiraj po datumu, najnoviji prvi)
+    const latestEntriesByStore = Object.entries(entriesByStore).map(([storeId, entries]) => {
+      const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+      return sorted[0]; // Najnoviji unos za taj dućan
+    });
+
+    // Pronađi najnižu cijenu među najnovijim unosima za svaki dućan
+    const lowestEntry = latestEntriesByStore.reduce((lowest, entry) => 
+      entry.price < lowest.price ? entry : lowest
+    );
+
+    return lowestEntry;
+  };
+  
+  const lowestPriceEntry = getLowestPriceEntry();
   const lowestPriceStore = lowestPriceEntry ? getStoreById(lowestPriceEntry.storeId) : null;
   const displayPrice = lowestPriceEntry ? lowestPriceEntry.price : coffee.priceEUR;
   
@@ -104,13 +130,14 @@ export default function CoffeeCard({ coffee, index = 0 }) {
               ) : null}
             </div>
             
-            {/* Store info - prikaži samo ako postoji price history entry */}
-            {lowestPriceStore && lowestPriceEntry && (
-              <div className="flex items-center gap-1 text-sm text-coffee-roast mb-4">
-                <Store className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-sm text-coffee-roast mb-4">
+              <Store className="w-4 h-4" />
+              {lowestPriceStore && lowestPriceEntry ? (
                 <span>{lowestPriceStore.name} ({formatDate(lowestPriceEntry.date)})</span>
-              </div>
-            )}
+              ) : (
+                <span>{coffee.store?.name || 'Nepoznat dućan'}</span>
+              )}
+            </div>
             
             {/* Arabica/Robusta */}
             <div className="mb-4">

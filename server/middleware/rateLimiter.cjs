@@ -3,16 +3,26 @@ const rateLimit = require('express-rate-limit');
 /**
  * Opći rate limiter za sve API zahtjeve
  * 100 zahtjeva po 15 minuta po IP adresi
+ * U developmentu, povećan limit za lakše testiranje
  */
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuta
-  max: 100, // maksimalno 100 zahtjeva po IP-u
+  max: NODE_ENV === 'development' ? 1000 : 100, // U developmentu više zahtjeva za testiranje
   message: {
     error: 'Previše zahtjeva',
     message: 'Previše zahtjeva s ove IP adrese, pokušajte ponovno za 15 minuta.'
   },
   standardHeaders: true, // Vraća rate limit info u `RateLimit-*` headers
   legacyHeaders: false, // Ne koristi `X-RateLimit-*` headers
+  // U developmentu, skip rate limiting za localhost
+  skip: (req) => {
+    if (NODE_ENV === 'development') {
+      const ip = req.ip || req.connection.remoteAddress;
+      return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || req.hostname === 'localhost';
+    }
+    return false;
+  }
 });
 
 /**

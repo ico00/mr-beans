@@ -43,11 +43,11 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <CoffeeProvider>
-          <AppContent />
-        </CoffeeProvider>
-      </AuthProvider>
+    <AuthProvider>
+      <CoffeeProvider>
+        <AppContent />
+      </CoffeeProvider>
+    </AuthProvider>
     </ErrorBoundary>
   );
 }

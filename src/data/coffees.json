@@ -111,8 +111,8 @@
         "VN",
         "uganda"
       ],
-      "storeId": "2",
-      "priceEUR": 38.99,
+      "storeId": "7",
+      "priceEUR": 27.99,
       "weightG": 1000,
       "rating": 3,
       "image": "1766085528385-2552-d-crema_e_aroma-beans-_2.png",
@@ -142,6 +142,12 @@
           "date": "2025-12-21",
           "price": 38.99,
           "storeId": "2"
+        },
+        {
+          "id": "1766788171793",
+          "date": "2025-12-26T00:00:00.000Z",
+          "price": 27.99,
+          "storeId": "7"
         }
       ],
       "createdAt": "2025-12-18"
@@ -234,7 +240,7 @@
         "UG",
         "MX"
       ],
-      "storeId": "1766347164381",
+      "storeId": "6",
       "priceEUR": 5.1,
       "weightG": 55,
       "rating": 5,
@@ -243,10 +249,10 @@
       "id": "1766346800816",
       "priceHistory": [
         {
-          "id": "1766346800816",
-          "date": "2025-12-21",
+          "id": "1766788296531",
+          "date": "2025-12-26T00:00:00.000Z",
           "price": 5.1,
-          "storeId": "1"
+          "storeId": "6"
         }
       ],
       "createdAt": "2025-12-21"
