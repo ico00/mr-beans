@@ -572,7 +572,12 @@ const uploadImage = async (file, type = 'coffee') => {
           <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3 rounded-xl ${
             errors.countryIds ? 'bg-red-50 border-2 border-error' : 'bg-coffee-cream/30'
           }`}>
-            {[...countries].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(country => {
+            {[...countries].sort((a, b) => {
+              // "Nepoznato" uvijek na kraju
+              if (a.id === 'UNKNOWN') return 1;
+              if (b.id === 'UNKNOWN') return -1;
+              return a.name.localeCompare(b.name, 'hr');
+            }).map(country => {
               const isSelected = formData.countryIds?.includes(country.id);
               return (
                 <button

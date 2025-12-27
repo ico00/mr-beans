@@ -335,10 +335,13 @@ export function CoffeeProvider({ children }) {
   const enrichedCoffees = coffees.map(getEnrichedCoffee);
 
   // Statistike
+  // Filtriraj samo kave u zrnu za prosječnu cijenu
+  const beanCoffees = coffees.filter(c => c.type === 'Zrno');
+  
   const stats = {
     totalCoffees: coffees.length,
-    averagePrice: coffees.length > 0 
-      ? (coffees.reduce((sum, c) => sum + c.priceEUR, 0) / coffees.length).toFixed(2)
+    averagePrice: beanCoffees.length > 0 
+      ? (beanCoffees.reduce((sum, c) => sum + c.priceEUR, 0) / beanCoffees.length).toFixed(2)
       : 0,
     averageRating: coffees.length > 0
       ? (coffees.reduce((sum, c) => sum + c.rating, 0) / coffees.length).toFixed(1)

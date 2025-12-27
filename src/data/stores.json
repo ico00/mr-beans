@@ -49,6 +49,13 @@
       "name": "Muller",
       "type": "Trgovina",
       "website": "https://www.muller.hr"
+    },
+
+    {
+      "id": "9",
+      "name": "Metro",
+      "type": "Trgovina",
+      "website": "https://www.metro.hr"
     }
 
     

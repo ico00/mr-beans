@@ -145,7 +145,7 @@ export default function Landing() {
             <StatCard 
               icon={TrendingUp}
               value={`${formatPrice(stats.averagePrice)}`}
-              label="Prosječna cijena"
+              label="Prosječna cijena (Zrno)"
               delay={0.1}
             />
             <StatCard 

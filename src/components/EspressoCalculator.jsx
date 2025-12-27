@@ -50,7 +50,7 @@ export default function EspressoCalculator() {
   const groundsSuggestions = [
     {
       title: 'Gnojivo za biljke',
-      description: 'Talog kave je odličan izvor dušika i drugih hraniva za biljke. Miješajte ga s tlim ili koristite kao mulč oko biljaka.'
+      description: 'Talog kave je odličan izvor dušika i drugih hraniva za biljke. Miješajte ga s tlom ili koristite kao gnojivo oko biljaka.'
     },
     
     {
@@ -80,7 +80,7 @@ export default function EspressoCalculator() {
           className="text-center mb-8"
         >
           <h2 className="text-3xl md:text-4xl font-display font-bold text-coffee-dark mb-3">
-            Kalkulator cijene espressa (nije za one slabijeg srca).
+            Kalkulator cijene espressa (nije za one slabijeg srca)
           </h2>
           <p className="text-coffee-roast max-w-2xl mx-auto">
             Odaberite kavu i količinu grama po espressu kako biste vidjeli približnu cijenu jedne šalice.

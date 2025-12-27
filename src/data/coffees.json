@@ -268,8 +268,8 @@
         "VN",
         "ID"
       ],
-      "storeId": "2",
-      "priceEUR": 8.99,
+      "storeId": "4",
+      "priceEUR": 6.92,
       "weightG": 250,
       "rating": 3,
       "image": "1766402173256-lavazza-crema_e_gusto.png",
@@ -281,9 +281,149 @@
           "date": "2025-12-22",
           "price": 8.99,
           "storeId": "2"
+        },
+        {
+          "id": "1766839651778",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 6.92,
+          "storeId": "4"
         }
       ],
       "createdAt": "2025-12-22"
+    },
+    {
+      "brandId": "1",
+      "name": "Super Crema",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 60,
+      "countryIds": [
+        "CR",
+        "GT",
+        "HN"
+      ],
+      "storeId": "5",
+      "priceEUR": 42.99,
+      "weightG": 1000,
+      "rating": 3,
+      "image": "1766838390506-lavazza-super_crema.png",
+      "id": "1766838395962",
+      "priceHistory": [
+        {
+          "id": "1766838395962",
+          "date": "2025-12-27",
+          "price": 42.99,
+          "storeId": "5"
+        },
+        {
+          "id": "1766838436042",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 31.09,
+          "storeId": "3"
+        },
+        {
+          "id": "1766838478172",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 29.75,
+          "storeId": "4"
+        }
+      ],
+      "createdAt": "2025-12-27"
+    },
+    {
+      "brandId": "1",
+      "name": "Crema e gusto",
+      "type": "Zrno",
+      "roast": "Dark",
+      "arabicaPercentage": 50,
+      "countryIds": [
+        "BR",
+        "VN",
+        "ID"
+      ],
+      "storeId": "5",
+      "priceEUR": 27.99,
+      "weightG": 1000,
+      "rating": 3,
+      "image": "1766839474398-lavazza-crema_e_gusto.png",
+      "id": "1766839482198",
+      "priceHistory": [
+        {
+          "id": "1766839482198",
+          "date": "2025-12-27",
+          "price": 27.99,
+          "storeId": "5"
+        },
+        {
+          "id": "1766839554808",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 21.69,
+          "storeId": "4"
+        }
+      ],
+      "createdAt": "2025-12-27"
+    },
+    {
+      "brandId": "5",
+      "name": "Espresso",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        "UNKNOWN"
+      ],
+      "storeId": "3",
+      "priceEUR": 28.59,
+      "weightG": 1000,
+      "rating": 3,
+      "image": "1766861449876-julius_meinl-espresso.png",
+      "id": "1766861458863",
+      "priceHistory": [
+        {
+          "id": "1766861458863",
+          "date": "2025-12-27",
+          "price": 28.59,
+          "storeId": "3"
+        },
+        {
+          "id": "1766861710638",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 34.99,
+          "storeId": "5"
+        }
+      ],
+      "createdAt": "2025-12-27"
+    },
+    {
+      "brandId": "7",
+      "name": "Colombia",
+      "type": "Nespresso kapsula",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        "CO"
+      ],
+      "storeId": "2",
+      "priceEUR": 5.49,
+      "weightG": 55,
+      "rating": 4,
+      "image": "1766862157107-starbucks-NS-colombia.png",
+      "id": "1766862170085",
+      "priceHistory": [
+        {
+          "id": "1766862170085",
+          "date": "2025-12-27",
+          "price": 5.49,
+          "storeId": "2"
+        },
+        {
+          "id": "1766862235376",
+          "date": "2025-12-27T00:00:00.000Z",
+          "price": 5.09,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2025-12-27"
     }
   ]
 }

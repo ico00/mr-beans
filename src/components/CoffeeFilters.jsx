@@ -148,7 +148,12 @@ export default function CoffeeFilters({ filters, setFilters }) {
                     className="form-input"
                   >
                     <option value="">Sve države</option>
-                    {[...countries].sort((a, b) => a.name.localeCompare(b.name, 'hr')).map(country => (
+                    {[...countries].sort((a, b) => {
+                      // "Nepoznato" uvijek na kraju
+                      if (a.id === 'UNKNOWN') return 1;
+                      if (b.id === 'UNKNOWN') return -1;
+                      return a.name.localeCompare(b.name, 'hr');
+                    }).map(country => (
                       <option key={country.id} value={country.id}>
                         {country.flag} {country.name}
                       </option>

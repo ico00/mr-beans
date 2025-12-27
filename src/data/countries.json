@@ -1,6 +1,14 @@
 {
   "countries": [
     {
+      "id": "UNKNOWN",
+      "name": "Nepoznato",
+      "flag": "❓",
+      "region": "Nepoznato",
+      "coffeeProduction": "Porijeklo kave nije poznato",
+      "varieties": []
+    },
+    {
       "id": "BR",
       "name": "Brazil",
       "flag": "🇧🇷",
