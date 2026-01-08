@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coffee, Home, Table, Grid3X3, Plus, Menu, X, Lock, LockOpen } from 'lucide-react';
+import { Coffee, Home, Table, Grid3X3, Plus, Menu, X, Lock, LockOpen, ArrowRightLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navigation() {
@@ -13,6 +13,7 @@ export default function Navigation() {
     { path: '/', label: 'Početna', icon: Home },
     { path: '/coffees', label: 'Kave', icon: Coffee },
     { path: '/table', label: 'Tablica', icon: Table },
+    { path: '/compare', label: 'Usporedba', icon: ArrowRightLeft },
   ];
   
   const adminNavLinks = [

@@ -408,7 +408,7 @@ export function PriceComparisonChart({ coffees, height = 400 }) {
                   stroke: '#fff',
                   strokeWidth: 2
                 }}
-                connectNulls={false}
+                connectNulls={true}
               />
             );
           })}

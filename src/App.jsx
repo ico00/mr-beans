@@ -10,6 +10,7 @@ import TableView from './pages/TableView';
 import AddCoffee from './pages/AddCoffee';
 import CoffeeDetail from './pages/CoffeeDetail';
 import EditCoffee from './pages/EditCoffee';
+import CompareCoffee from './pages/CompareCoffee';
 
 function AppContent() {
   const { showAdminLogin, closeLoginModal, login } = useAuth();
@@ -24,6 +25,7 @@ function AppContent() {
               <Route path="/" element={<Landing />} />
               <Route path="/coffees" element={<CoffeeList />} />
               <Route path="/table" element={<TableView />} />
+              <Route path="/compare" element={<CompareCoffee />} />
               <Route path="/add" element={<AddCoffee />} />
               <Route path="/coffee/:id" element={<CoffeeDetail />} />
               <Route path="/edit/:id" element={<EditCoffee />} />

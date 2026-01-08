@@ -80,8 +80,8 @@
         "brazil",
         "BR"
       ],
-      "storeId": "3",
-      "priceEUR": 34.09,
+      "storeId": "4",
+      "priceEUR": 28.64,
       "weightG": 1000,
       "rating": 5,
       "image": "1766402418456-lavazza-tierra-brasile.png",
@@ -93,6 +93,12 @@
           "date": "2025-12-18",
           "price": 34.09,
           "storeId": "3"
+        },
+        {
+          "id": "1767810570681",
+          "date": "2026-01-07T00:00:00.000Z",
+          "price": 28.64,
+          "storeId": "4"
         }
       ],
       "createdAt": "2025-12-18"
@@ -192,8 +198,8 @@
         null,
         "mix"
       ],
-      "storeId": "2",
-      "priceEUR": 8.23,
+      "storeId": "4",
+      "priceEUR": 9.69,
       "weightG": 250,
       "rating": 4,
       "image": "1766318106019-illy-classico.png",
@@ -223,6 +229,30 @@
           "date": "2025-12-21",
           "price": 7.27,
           "storeId": "4"
+        },
+        {
+          "id": "1767872182872",
+          "date": "2026-01-08T00:00:00.000Z",
+          "price": 9.69,
+          "storeId": "4"
+        },
+        {
+          "id": "1767872283280",
+          "date": "2026-01-08T00:00:00.000Z",
+          "price": 10.29,
+          "storeId": "2"
+        },
+        {
+          "id": "1767872377755",
+          "date": "2026-01-08T00:00:00.000Z",
+          "price": 7.69,
+          "storeId": "3"
+        },
+        {
+          "id": "1767872408111",
+          "date": "2026-01-08T00:00:00.000Z",
+          "price": 8.99,
+          "storeId": "5"
         }
       ],
       "createdAt": "2025-12-21"
@@ -424,6 +454,59 @@
         }
       ],
       "createdAt": "2025-12-27"
+    },
+    {
+      "brandId": "7",
+      "name": "Pike Place",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        "CO",
+        "GT",
+        "CR",
+        "BR"
+      ],
+      "storeId": "3",
+      "priceEUR": 18.39,
+      "weightG": 450,
+      "rating": 4,
+      "image": "1767810150177-starbucks-pike_place.png",
+      "id": "1767810116995",
+      "priceHistory": [
+        {
+          "id": "1767810116995",
+          "date": "2026-01-07",
+          "price": 18.39,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2026-01-07"
+    },
+    {
+      "brandId": "7",
+      "name": "Breakfast",
+      "type": "Zrno",
+      "roast": "Medium",
+      "arabicaPercentage": 100,
+      "countryIds": [
+        "mix"
+      ],
+      "storeId": "3",
+      "priceEUR": 17.79,
+      "weightG": 450,
+      "rating": 4,
+      "image": "1767873408068-starbucks-breakfast.png",
+      "id": "1767873209900",
+      "priceHistory": [
+        {
+          "id": "1767873209900",
+          "date": "2026-01-08",
+          "price": 17.79,
+          "storeId": "3"
+        }
+      ],
+      "createdAt": "2026-01-08"
     }
   ]
 }

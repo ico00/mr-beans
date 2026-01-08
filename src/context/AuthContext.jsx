@@ -81,8 +81,14 @@ export function AuthProvider({ children, onAuthChange }) {
    */
   const getAuthHeaders = useCallback(() => {
     const headers = { 'Content-Type': 'application/json' }
-    if (adminToken) {
-      headers['Authorization'] = `Bearer ${adminToken}`
+    // Pokušaj koristiti token iz state-a, ako nije postavljen, provjeri localStorage
+    const token = adminToken || localStorage.getItem('adminToken')
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+      // Ako token postoji u localStorage ali ne u state-u, postavi ga u state
+      if (!adminToken && token) {
+        setAdminToken(token)
+      }
     }
     return headers
   }, [adminToken])
@@ -106,13 +112,14 @@ export function AuthProvider({ children, onAuthChange }) {
         // Provjeri da li postoji validan token
         let token = localStorage.getItem('adminToken')
         
-        // Ako nema tokena, automatski se prijavi s default lozinkom
+        // Ako nema tokena, automatski se prijavi
         if (!token) {
           try {
-            const response = await fetch(`${API_URL}/auth/login`, {
+            // U development modu, koristi dev-login endpoint koji ne zahtijeva lozinku
+            const devLoginUrl = `${API_URL}/auth/dev-login`
+            const response = await fetch(devLoginUrl, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ password: 'admin123' })
+              headers: { 'Content-Type': 'application/json' }
             })
             
             if (response.ok) {
@@ -120,10 +127,47 @@ export function AuthProvider({ children, onAuthChange }) {
               if (data.success && data.token) {
                 token = data.token
                 localStorage.setItem('adminToken', token)
-                console.log('✅ Automatski login u development mode-u uspješan')
+                console.log('✅ Automatski login u development mode-u uspješan (dev-login)')
+              } else {
+                console.warn('⚠️ Dev-login nije uspio:', data.message || 'Nepoznata greška')
+                // Fallback na obični login ako dev-login ne uspije
+                try {
+                  const fallbackResponse = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: 'admin123' })
+                  })
+                  if (fallbackResponse.ok) {
+                    const fallbackData = await fallbackResponse.json()
+                    if (fallbackData.success && fallbackData.token) {
+                      token = fallbackData.token
+                      localStorage.setItem('adminToken', token)
+                      console.log('✅ Automatski login uspješan (fallback)')
+                    }
+                  }
+                } catch (fallbackError) {
+                  // Silent fail za fallback
+                }
               }
             } else {
-              console.warn('⚠️ Server je dostupan ali login nije uspio. Provjerite da li je server pokrenut.')
+              // Dev-login endpoint možda ne postoji, pokušaj obični login
+              try {
+                const fallbackResponse = await fetch(`${API_URL}/auth/login`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ password: 'admin123' })
+                })
+                if (fallbackResponse.ok) {
+                  const fallbackData = await fallbackResponse.json()
+                  if (fallbackData.success && fallbackData.token) {
+                    token = fallbackData.token
+                    localStorage.setItem('adminToken', token)
+                    console.log('✅ Automatski login uspješan (fallback)')
+                  }
+                }
+              } catch (fallbackError) {
+                console.warn('⚠️ Login nije uspio:', fallbackError.message)
+              }
             }
           } catch (error) {
             console.warn('⚠️ Server nije dostupan. Pokrenite server s `npm run server` za potpune admin ovlasti.')
@@ -149,7 +193,28 @@ export function AuthProvider({ children, onAuthChange }) {
           setAdminToken(token)
           console.log('🔐 Admin token postavljen')
         } else {
-          console.log('🔓 Development mode: admin omogućen, ali token nije dostupan (pokrenite server)')
+          console.log('🔓 Development mode: admin omogućen, ali token nije dostupan')
+          // Pokušaj ponovno dobiti token (server možda nije bio spreman)
+          // Ne blokiraj aplikaciju, ali nastavi pokušavati u pozadini
+          setTimeout(async () => {
+            try {
+              const retryResponse = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: 'admin123' })
+              })
+              if (retryResponse.ok) {
+                const retryData = await retryResponse.json()
+                if (retryData.success && retryData.token) {
+                  localStorage.setItem('adminToken', retryData.token)
+                  setAdminToken(retryData.token)
+                  console.log('✅ Automatski login uspješan nakon retry-ja')
+                }
+              }
+            } catch (err) {
+              // Silent fail - server još nije dostupan
+            }
+          }, 2000)
         }
         setLoading(false)
         return

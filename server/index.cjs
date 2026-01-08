@@ -5,6 +5,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const jwt = require('jsonwebtoken');
 const { login, verifyToken, authMiddleware } = require('./auth.cjs');
 const { generalLimiter, loginLimiter, writeLimiter, uploadLimiter } = require('./middleware/rateLimiter.cjs');
 const { corsMiddleware, getAllowedOrigins } = require('./middleware/corsConfig.cjs');
@@ -71,6 +72,21 @@ const writeJsonFile = (filename, data) => {
 };
 
 // ============ AUTH RUTE ============
+
+// Development auto-login endpoint (samo u development modu, bez rate limiting)
+const NODE_ENV = process.env.NODE_ENV || 'development';
+if (NODE_ENV === 'development') {
+  app.post('/api/auth/dev-login', (req, res) => {
+    // U development modu, automatski generiraj token bez provjere lozinke
+    const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-not-for-production';
+    const token = jwt.sign(
+      { role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    res.json({ success: true, token });
+  });
+}
 
 // Admin login - strog rate limiter (5 pokušaja po 15 min)
 app.post('/api/auth/login', loginLimiter, (req, res) => {

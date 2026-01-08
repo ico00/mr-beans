@@ -28,10 +28,11 @@ const generalLimiter = rateLimit({
 /**
  * Strog limiter za login endpoint
  * 5 pokušaja prijave po 15 minuta po IP adresi
+ * U development modu, skip rate limiting za localhost
  */
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuta
-  max: 5, // maksimalno 5 pokušaja prijave
+  max: NODE_ENV === 'development' ? 100 : 5, // U developmentu više pokušaja
   message: {
     error: 'Previše pokušaja prijave',
     message: 'Previše pokušaja prijave, pokušajte ponovno za 15 minuta.'
@@ -40,6 +41,14 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Ne broji uspješne zahtjeve (samo neuspješne pokušaje)
   skipFailedRequests: false, // Broji neuspješne pokušaje
+  // U developmentu, skip rate limiting za localhost
+  skip: (req) => {
+    if (NODE_ENV === 'development') {
+      const ip = req.ip || req.connection.remoteAddress;
+      return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || req.hostname === 'localhost';
+    }
+    return false;
+  }
 });
 
 /**

@@ -7,11 +7,14 @@ const CoffeeContext = createContext(null);
 const API_BASE = '/api';
 
 // Helper funkcija za dohvaćanje auth headers-a
+// Dohvaća token iz localStorage - trebao bi biti postavljen kroz AuthContext
 const getAuthHeaders = () => {
   const token = localStorage.getItem('adminToken');
   const headers = { 'Content-Type': 'application/json' };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  } else {
+    console.warn('⚠️ Token nije dostupan u getAuthHeaders. API pozivi koji zahtijevaju autentikaciju neće raditi.');
   }
   return headers;
 };

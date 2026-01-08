@@ -9,6 +9,7 @@ import { PriceComparisonChart } from '../components/PriceChart';
 import CoffeeFunFacts from '../components/CoffeeFunFacts';
 import EspressoCalculator from '../components/EspressoCalculator';
 import CoffeeCard from '../components/CoffeeCard';
+import StorePriceWordCloud from '../components/StorePriceWordCloud';
 import { formatPrice, formatDate, IMAGES_FOLDER, LOGOS_FOLDER } from '../utils/formatters';
 
 export default function Landing() {
@@ -277,6 +278,13 @@ export default function Landing() {
           </div>
         </section>
       )}
+
+       {/* Store Price Wordcloud Section - Hidden until database is populated */}
+       {/* <section className="py-12 md:py-20 bg-gradient-to-b from-transparent to-coffee-cream/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <StorePriceWordCloud />
+        </div>
+      </section> */}
 
        {/* Live Market Prices Section */}
        <section className="py-12 md:py-20 bg-gradient-to-b from-transparent to-coffee-cream/50">

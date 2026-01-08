@@ -140,22 +140,30 @@ export default function CoffeeCard({ coffee, index = 0 }) {
             </div>
             
             {/* Arabica/Robusta */}
-            <div className="mb-4">
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-amber-600">Arabica {coffee.arabicaPercentage}%</span>
-                <span className="text-amber-900">Robusta {coffee.robustaPercentage}%</span>
-              </div>
-              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden flex">
-                <div 
-                  className="h-full bg-amber-500 transition-all duration-500"
-                  style={{ width: `${coffee.arabicaPercentage}%` }}
-                />
-                <div 
-                  className="h-full bg-amber-900 transition-all duration-500"
-                  style={{ width: `${coffee.robustaPercentage}%` }}
-                />
-              </div>
-            </div>
+            {(coffee.arabicaPercentage !== undefined || coffee.robustaPercentage !== undefined) && (() => {
+              const arabica = coffee.arabicaPercentage ?? 0;
+              const robusta = coffee.robustaPercentage ?? (coffee.arabicaPercentage !== undefined ? 100 - coffee.arabicaPercentage : 0);
+              return (
+                <div className="mb-4">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-amber-600">Arabica {arabica}%</span>
+                    <span className="text-amber-900">Robusta {robusta}%</span>
+                  </div>
+                  <div className="h-2 bg-neutral-200 rounded-full overflow-hidden flex">
+                    <div 
+                      className="h-full bg-amber-500 transition-all duration-500"
+                      style={{ width: `${arabica}%` }}
+                    />
+                    {robusta > 0 && (
+                      <div 
+                        className="h-full bg-amber-900 transition-all duration-500"
+                        style={{ width: `${robusta}%` }}
+                      />
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
             
             {/* Price & Weight */}
             <div className="flex items-center justify-between">
